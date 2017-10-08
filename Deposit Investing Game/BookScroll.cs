@@ -1,0 +1,125 @@
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
+
+namespace Deposit_Investing_Game
+{
+    public class BookScroll : Program
+    {
+        #region ctor
+
+        public BookScroll(XDocument database)
+        {
+            DataBase = new XDocument(database);
+            Screens = new List<XElement>(database.Root.Elements("Screen"));
+            RecentScreen = new XElement(Screens.First());
+            Path = new XElement(RecentScreen.Element("Path"));
+        }
+
+        #endregion
+
+        #region The actual function
+
+        public void next(string mode)
+        {
+
+            #region assigning locked/unlocked values
+
+            if (mode.ToLower() == "manual")
+            {
+                isUnlocked = true;
+            }
+            else if(mode.ToLower() == "tip" || mode.ToLower() == "enrichement")
+            {
+                Path = new XElement(RecentScreen.Element("Path"));
+                XElement isLocked = new XElement(RecentScreen.Element("Unlocked"));
+                isUnlocked = bool.Parse(isLocked.Value);
+            }
+
+            #endregion
+
+            Console.Clear();
+
+            if (isUnlocked)
+            {
+                WritingText(Path.Value);
+                Console.WriteLine();
+                Console.WriteLine("enter 'u' to go to the next screen, or 'd' to go to the previous screen.");
+                MainMeunMessage();
+                Console.WriteLine();
+                string input = Console.ReadLine();
+                ReturnToMainMeun(input);
+
+                switch (input.ToLower())
+                {
+                    case "d":
+                        Path = RecentScreen.Element("PreviousScreen");
+                        break;
+                    case "u":
+                        Path = RecentScreen.Element("NextScreen");
+                        break;
+                    default:
+                        next(mode);
+                        break;
+                }
+
+                if (Path.Value == "")
+                {
+                    ReturnToMainMeun("m");
+                }
+
+                foreach (var screen in Screens)
+                {
+                    if (screen.Element("Path").Value == Path.Value)
+                    {
+                        RecentScreen = screen;
+                    }
+                }
+
+                next(mode);
+            }
+
+            #region what if the tip enrichment is locked?
+
+            else
+            {
+
+                if (Screens.ElementAt(0).Value == RecentScreen.Value)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine($"You haven't unlocked any {mode}s yet!");
+                }
+
+                else
+                {
+                    Console.WriteLine();
+                    Console.WriteLine($"You haven't unlocked this {mode} yet!");
+                    Console.WriteLine();
+                    Console.WriteLine($"Which means you also haven't unlocked any {mode} that comes after it..");
+                }
+
+                Console.WriteLine();
+                Console.WriteLine("Enter anything to return to the main meun");
+                Console.WriteLine();
+                Console.ReadLine();
+                ReturnToMainMeun("m");
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+        #region Properties
+
+        private XDocument DataBase { get; set; }
+        private IEnumerable<XElement> Screens { get; set; }
+        private XElement Path { get; set; }
+        private XElement RecentScreen { get; set; }
+        private bool isUnlocked { get; set; }
+
+        #endregion
+    }
+}
