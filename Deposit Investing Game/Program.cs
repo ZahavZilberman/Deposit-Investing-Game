@@ -195,7 +195,7 @@ namespace Deposit_Investing_Game
             Console.WriteLine();
             Console.WriteLine($"Risk profile of all players in this game: {Agame.riskProfile * 100}%");
             Console.WriteLine();
-            Console.WriteLine($"This game's default bank has the name: {Agame.bank.name}");
+            Console.WriteLine($"This game's default bank has the name: '{Agame.bank.name}'");
             Console.WriteLine();
             Console.WriteLine($"The amount of money that the bank starts the game with: {Agame.bank.startGameMoney} dollars.");
             Console.WriteLine();
@@ -275,11 +275,9 @@ namespace Deposit_Investing_Game
                     ViewGameDetailsInTimeTrialMode(choosenGame, games);
                 }
 
-                else
-                {
-                    ChooseGameToPlayInTimeTrial(games);
-                }
             }
+
+            ChooseGameToPlayInTimeTrial(games);
         }
 
         #endregion
@@ -464,58 +462,31 @@ namespace Deposit_Investing_Game
 
         #endregion
 
-        #region function that "translates" all games into objects
+        #region function that builds and returns all games into objects
 
         public static List<AGame> WritingAllGamesInformation()
         {
             List<AGame> games = new List<AGame>();
 
-            #region First Game
+            List<string> gamePaths = new List<string>();
 
-            List<Deposit> deposits = new List<Deposit>();
+            XDocument gamesNavigator = new XDocument(XDocument.Load(@"DepositInvestingGame\GamesNavigator.xml"));
+            XElement root = gamesNavigator.Root;
 
-            string bankName = "Hamya";
+            IEnumerable<XElement> docGames = new List<XElement>(root.Elements("Game"));
+            
+            foreach(XElement docGame in docGames)
+            {
+                XElement docGamePath = new XElement(docGame.Element("Path"));
 
-            Deposit flower = new Deposit("Flower", 1, bankName, 1.02);
-            deposits.Add(flower);
+                gamePaths.Add(docGamePath.Value);
+            }
 
-            Deposit bear = new Deposit("Bear", 2, bankName, 1.025);
-            deposits.Add(bear);
-
-            Deposit Kong = new Deposit("Kong", 3, bankName, 1.03);
-            deposits.Add(Kong);
-
-            Deposit Monkey = new Deposit("Monkey", 4, bankName, 1.035);
-            deposits.Add(Monkey);
-
-            Deposit Lizard = new Deposit("Lizard", 5, bankName, 1.04);
-            deposits.Add(Lizard);
-
-            Deposit Elephant = new Deposit("Elephant", 6, bankName, 1.045);
-            deposits.Add(Elephant);
-
-            Deposit Zebra = new Deposit("Zebra", 7, bankName, 1.05);
-            deposits.Add(Zebra);
-
-            Deposit Lion = new Deposit("Lion", 8, bankName, 1.055);
-            deposits.Add(Lion);
-
-            Deposit Crocodile = new Deposit("Crocodile", 9, bankName, 1.06);
-            deposits.Add(Crocodile);
-
-            Bank hamaya = new Bank(deposits);
-            hamaya.name = bankName;
-
-            double moneyToEndGame = 20000;
-
-            hamaya.startGameMoney = moneyToEndGame / 20;
-            hamaya.money = moneyToEndGame / 20;
-
-            AGame firstGame = new AGame(0.6, moneyToEndGame, hamaya, 0, "First Game", 1000);
-
-            games.Add(firstGame);
-
-            #endregion
+            foreach(string aGamePath in gamePaths)
+            {
+                AGame game = new AGame(aGamePath);
+                games.Add(game);
+            }
 
             return games;
         }
@@ -870,16 +841,12 @@ namespace Deposit_Investing_Game
             #region Creating the current game object (including bank)
 
             List<AGame> allGames = WritingAllGamesInformation();
-            AGame gameToLoad;
-
             string gameName = fileInfo.ElementAt(1);
 
             foreach(AGame game in allGames)
             {
                 if (game.name == gameName)
                 {
-                    gameToLoad = new AGame(game.riskProfile, game.moneyToEndGame, game.bank, game.moneyToStartWith, game.name, game.playersIncome);
-
                     #region updating bank and its deposits
 
                     int bankStartIndex = fileInfoInList.IndexOf("Bank:");
@@ -1093,6 +1060,446 @@ namespace Deposit_Investing_Game
 
         #endregion
 
+        #region Creating your own game
+
+        static void OpeningAnotherDetailInput()
+        {
+            Console.Clear();
+            Console.WriteLine();
+            MainMeunMessage();
+        }
+
+        static void CreatingCustomGame()
+        {
+            #region general game details
+
+            OpeningAnotherDetailInput();
+
+            Console.WriteLine();
+            Console.WriteLine("Enter the game's name:");
+            Console.WriteLine();
+            string gameName = Console.ReadLine();
+
+            ReturnToMainMeun(gameName);
+
+            OpeningAnotherDetailInput();
+
+            Console.WriteLine();
+            Console.WriteLine("Alright. Now enter the risk profile all players in this game will have:");
+            Console.WriteLine();
+            string riskProfile = Console.ReadLine();
+            ReturnToMainMeun(riskProfile);
+
+            Console.WriteLine();
+
+            double riskProfileNum;
+            while(!double.TryParse(riskProfile, out riskProfileNum))
+            {
+                Console.WriteLine();
+                Console.WriteLine("Your input for the risk profile isn't even in the correct 'format'.");
+                Console.WriteLine("It needs to be a number between 0 and 1, which is the 'risk profile precentage' divided by 100.");
+                Console.WriteLine("Enter again:");
+                Console.WriteLine();
+                riskProfile = Console.ReadLine();
+                ReturnToMainMeun(riskProfile);
+            }
+
+            while(!(0 < double.Parse(riskProfile) && double.Parse(riskProfile) < 1))
+            {
+                Console.WriteLine();
+                Console.WriteLine("The risk profile must be between 0 and 1, which is the 'risk profile precentage' divided by 100.");
+                Console.WriteLine("Enter again:");
+                Console.WriteLine();
+                riskProfile = Console.ReadLine();
+                ReturnToMainMeun(riskProfile);
+            }
+
+            OpeningAnotherDetailInput();
+
+            Console.WriteLine();
+            Console.WriteLine("Enter the amount of money a player must have to finish the game:");
+            Console.WriteLine();
+            string moneyToWin = Console.ReadLine();
+            ReturnToMainMeun(moneyToWin);
+
+            double endMoneyIsNum;
+            while(!double.TryParse(moneyToWin, out endMoneyIsNum))
+            {
+                Console.WriteLine();
+                Console.WriteLine("That's not even a number. Enter a number higher than 0 at least.");
+                Console.WriteLine("Enter again:");
+                Console.WriteLine();
+                moneyToWin = Console.ReadLine();
+                ReturnToMainMeun(moneyToWin);
+            }
+
+            while(double.Parse(moneyToWin) <= 0)
+            {
+                Console.WriteLine();
+                Console.WriteLine("The amount of money required to finish cant be negative or 0.");
+                Console.WriteLine("Enter again:");
+                Console.WriteLine();
+                moneyToWin = Console.ReadLine();
+                ReturnToMainMeun(moneyToWin);
+            }
+
+            OpeningAnotherDetailInput();
+
+            Console.WriteLine();
+            Console.WriteLine("Enter the amount of money any player would start this game with:");
+            Console.WriteLine();
+            string startPlayerMoney = Console.ReadLine();
+            ReturnToMainMeun(startPlayerMoney);
+
+            double startPlayerMoneyNum;
+            while (!double.TryParse(startPlayerMoney, out startPlayerMoneyNum))
+            {
+                Console.WriteLine();
+                Console.WriteLine("That's not even a number. Enter a number.");
+                Console.WriteLine("Enter again:");
+                Console.WriteLine();
+                startPlayerMoney = Console.ReadLine();
+                ReturnToMainMeun(startPlayerMoney);
+            }
+
+            while(double.Parse(startPlayerMoney) >= double.Parse(moneyToWin))
+            {
+                Console.WriteLine();
+                Console.WriteLine("The amount a player starts this game with must be smaller");
+                Console.WriteLine("than the amount neccesary to finish this game.");
+                Console.WriteLine("Enter again:");
+                Console.WriteLine();
+                startPlayerMoney = Console.ReadLine();
+                ReturnToMainMeun(startPlayerMoney);
+            }
+
+            OpeningAnotherDetailInput();
+
+            Console.WriteLine();
+            Console.WriteLine("Enter the income a player will receive between each turn:");
+            Console.WriteLine();
+            string incomePerTurn = Console.ReadLine();
+            ReturnToMainMeun(incomePerTurn);
+
+            double incomeIsNum;
+            while (!double.TryParse(incomePerTurn, out incomeIsNum))
+            {
+                Console.WriteLine();
+                Console.WriteLine("That's not even a number. Enter a number higher than 0 at least.");
+                Console.WriteLine("Enter again:");
+                Console.WriteLine();
+                incomePerTurn = Console.ReadLine();
+                ReturnToMainMeun(incomePerTurn);
+            }
+
+            while (double.Parse(incomePerTurn) <= 0)
+            {
+                Console.WriteLine();
+                Console.WriteLine("The amount of money a player receives between each turn can't be negative or 0.");
+                Console.WriteLine("(Or else.. How will he ever.. HUHHHHHH!!!111)");
+                Console.WriteLine("Enter again:");
+                Console.WriteLine();
+                incomePerTurn = Console.ReadLine();
+                ReturnToMainMeun(incomePerTurn);
+            }
+
+            while(double.Parse(incomePerTurn) >= double.Parse(moneyToWin))
+            {
+                Console.WriteLine();
+                Console.WriteLine("The amount of money a player receives between each turn can't be bigger than");
+                Console.WriteLine("the amount of money to finish this game.");
+                Console.WriteLine("Enter again:");
+                Console.WriteLine();
+                incomePerTurn = Console.ReadLine();
+                ReturnToMainMeun(incomePerTurn);
+            }
+
+            #endregion
+
+            #region General bank details
+
+            OpeningAnotherDetailInput();
+
+            Console.WriteLine();
+            Console.WriteLine("Now let's define the bank. Enter the bank name:");
+            Console.WriteLine();
+            string bankName = Console.ReadLine();
+            ReturnToMainMeun(bankName);
+
+            OpeningAnotherDetailInput();
+
+            Console.WriteLine();
+            Console.WriteLine("Nice name LOL. Now enter the amount of money the bank has at the start of this game:");
+            Console.WriteLine();
+            string bankStartMoney = Console.ReadLine();
+            ReturnToMainMeun(bankStartMoney);
+
+            double bankStartMoneyIsNum;
+            while (!double.TryParse(bankStartMoney, out bankStartMoneyIsNum))
+            {
+                Console.WriteLine();
+                Console.WriteLine("That's not even a number. Enter a number higher than 0 at least.");
+                Console.WriteLine("Enter again:");
+                Console.WriteLine();
+                bankStartMoney = Console.ReadLine();
+                ReturnToMainMeun(bankStartMoney);
+            }
+
+            while(((double.Parse(bankStartMoney) * 2) > double.Parse(moneyToWin)) || ((double.Parse(bankStartMoney) * 50) < double.Parse(moneyToWin)))
+            {
+                Console.WriteLine();
+                Console.WriteLine("Sorry, but for balance, make the bank's start money between 2%-20% of the");
+                Console.WriteLine($"amount of money needed to finish this game (which is {double.Parse(moneyToWin)} dollars)");
+                Console.WriteLine("Enter again:");
+                Console.WriteLine();
+                bankStartMoney = Console.ReadLine();
+                ReturnToMainMeun(bankStartMoney);
+            }
+
+            #endregion
+
+            #region Deposits details
+
+            List<string[]> allDeposits = new List<string[]>();
+
+            string moreDeposits;
+            bool continueWithDeposits = true;
+
+            OpeningAnotherDetailInput();
+
+            Console.WriteLine();
+            Console.WriteLine("Now let's enter the bank's deposits.");
+            Console.WriteLine();
+
+            for(int depositNum = 0; continueWithDeposits; depositNum++)
+            {
+                string[] depositDetails = new string[3];
+
+                if(depositNum > 0)
+                {
+                    OpeningAnotherDetailInput();
+                    Console.WriteLine();
+                }
+                Console.WriteLine($"Deposit number {(depositNum + 1).ToString()}");
+                Console.WriteLine();
+                Console.WriteLine("Enter the deposits name:");
+                Console.WriteLine();
+                string depositName = Console.ReadLine();
+                ReturnToMainMeun(depositName);
+
+                depositDetails[0] = depositName;
+
+                OpeningAnotherDetailInput();
+
+                Console.WriteLine();
+                Console.WriteLine("Enter the deposit's time span:");
+                Console.WriteLine();
+                string depositTimeSpan = Console.ReadLine();
+                ReturnToMainMeun(depositTimeSpan);
+
+                int depositTimeSpanIsNum;
+                while(!int.TryParse(depositTimeSpan, out depositTimeSpanIsNum))
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Enter a number only between 1-100 and only an integer.");
+                    Console.WriteLine("Enter again:");
+                    Console.WriteLine();
+                    depositTimeSpan = Console.ReadLine();
+                    ReturnToMainMeun(depositTimeSpan);
+                }
+
+                while (int.Parse(depositTimeSpan) < 1 || int.Parse(depositTimeSpan) > 100)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Enter a number only between 1-100 and only an integer.");
+                    Console.WriteLine("Enter again:");
+                    Console.WriteLine();
+                    depositTimeSpan = Console.ReadLine();
+                    ReturnToMainMeun(depositTimeSpan);
+                }
+
+                depositDetails[1] = depositTimeSpan;
+
+                OpeningAnotherDetailInput();
+
+                Console.WriteLine();
+                Console.WriteLine("Enter the deposit's default interest per year:");
+                Console.WriteLine();
+                string depositDefaultInterest = Console.ReadLine();
+                ReturnToMainMeun(depositDefaultInterest);
+
+                double depositDefaultInterestIsNum;
+                while (!double.TryParse(depositDefaultInterest, out depositDefaultInterestIsNum))
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Enter a number only between 1.001-1.1 (interest can range between 0.1%-10%).");
+                    Console.WriteLine("Enter again:");
+                    Console.WriteLine();
+                    depositDefaultInterest = Console.ReadLine();
+                    ReturnToMainMeun(depositDefaultInterest);
+                }
+
+                while (double.Parse(depositDefaultInterest) < 1.001 || double.Parse(depositDefaultInterest) > 1.1)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Enter a number only between 1.001-1.1 (interest can range between 0.1%-10%).");
+                    Console.WriteLine("Enter again:");
+                    Console.WriteLine();
+                    depositDefaultInterest = Console.ReadLine();
+                    ReturnToMainMeun(depositDefaultInterest);
+                }
+
+                depositDetails[2] = depositDefaultInterest;
+
+                OpeningAnotherDetailInput();
+
+                allDeposits.Add(depositDetails);
+
+                Console.WriteLine();
+                Console.WriteLine("Add more deposits?");
+                Console.WriteLine("(Enter 'y' for yes, or 'n' for no)");
+                Console.WriteLine();
+                moreDeposits = Console.ReadLine();
+                ReturnToMainMeun(moreDeposits);
+
+                while(moreDeposits.ToLower() != "y" && moreDeposits.ToLower() != "n")
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("That's neither 'y' nor 'n'..");
+                    Console.WriteLine("Enter 'y' for yes, or 'n' for no:");
+                    Console.WriteLine();
+                    moreDeposits = Console.ReadLine();
+                    ReturnToMainMeun(moreDeposits);
+                }
+
+                if(moreDeposits.ToLower() == "y")
+                {
+                    // continue the loop..
+                }
+
+                else if(moreDeposits.ToLower() == "n")
+                {
+                    continueWithDeposits = false;
+                }
+            }
+
+            #endregion
+
+            #region Writing the info to a new XML file and the game navigator
+
+            // relevant variables:
+            // gameName, riskProfile, moneyToWin, startPlayerMoney, incomePerTurn,
+            // bankName, bankStartMoney,
+            // allDeposits (with arrays that each includes: depositName, depositTimeSpan, depositDefaultInterest)
+
+            List<string> whatToWriteToXML = new List<string>();
+
+            whatToWriteToXML.Add("<AGame>");
+            whatToWriteToXML.Add("");
+            whatToWriteToXML.Add($"<Name>{gameName}</Name>");
+            whatToWriteToXML.Add($"<RiskProfile>{riskProfile}</RiskProfile>");
+            whatToWriteToXML.Add($"<MoneyToEnd>{moneyToWin}</MoneyToEnd>");
+            whatToWriteToXML.Add($"<StartMoney>{startPlayerMoney}</StartMoney>");
+            whatToWriteToXML.Add($"<Income>{incomeIsNum}</Income>");
+            whatToWriteToXML.Add($"<BankName>{bankName}</BankName>");
+            whatToWriteToXML.Add("");
+
+            whatToWriteToXML.Add($"<Bank>");
+            whatToWriteToXML.Add($"<StartBankMoney>{bankStartMoney}</StartBankMoney>");
+            whatToWriteToXML.Add($"</Bank>");
+            whatToWriteToXML.Add("");
+
+            for(int depositPosition = 0; depositPosition < allDeposits.Count; depositPosition++)
+            {
+                whatToWriteToXML.Add("");
+                whatToWriteToXML.Add("<Deposit>");
+                whatToWriteToXML.Add("");
+                whatToWriteToXML.Add($"<Name>{allDeposits.ElementAt(depositPosition)[0]}</Name>");
+                whatToWriteToXML.Add($"<TimeSpan>{allDeposits.ElementAt(depositPosition)[1]}</TimeSpan>");
+                whatToWriteToXML.Add($"<DefaultInterestPerYear>{allDeposits.ElementAt(depositPosition)[2]}</DefaultInterestPerYear>");
+                whatToWriteToXML.Add("");
+                whatToWriteToXML.Add("</Deposit>");
+            }
+
+            whatToWriteToXML.Add("");
+            whatToWriteToXML.Add("</AGame>");
+
+            File.WriteAllLines($@"DepositInvestingGame\Games\{gameName}.xml", whatToWriteToXML);
+            XDocument theDoc = new XDocument(XDocument.Load($@"DepositInvestingGame\Games\{gameName}.xml"));
+
+            XDocument gameNavigatorToEdit = new XDocument(XDocument.Load(@"DepositInvestingGame\GamesNavigator.xml"));
+            XElement root = gameNavigatorToEdit.Root;
+            IEnumerable<XElement> games = root.Elements("Game");
+
+            XElement path = new XElement(XName.Get("Path"));
+            path.SetValue($@"DepositInvestingGame\Games\{gameName}.xml");
+
+            XElement game = new XElement(XName.Get("Game"));
+            game.Add(path);
+
+            List<XElement> gamesInList = games.ToList();
+            gamesInList.Add(game);
+
+            root.RemoveNodes();
+            root.Add(gamesInList);
+
+            gameNavigatorToEdit.RemoveNodes();
+            gameNavigatorToEdit.Add(root);
+
+            File.Delete(@"DepositInvestingGame\GamesNavigator.xml");
+            gameNavigatorToEdit.Save(@"DepositInvestingGame\GamesNavigator.xml");
+
+            #endregion
+
+            #region Writing the info needed to the high score file
+
+            XDocument highScoreDoc = new XDocument(XDocument.Load(@"DepositInvestingGame\HighScore.xml"));
+            XElement highScoreRoot = new XElement(highScoreDoc.Root);
+            IEnumerable<XElement> gamesInHighScore = new List<XElement>(highScoreRoot.Elements("Game"));
+
+            XElement newGameInHighScore = new XElement(XName.Get("Game"));
+
+            XElement newGameNameInHighScore = new XElement(XName.Get("GameName"));
+            newGameNameInHighScore.SetValue($"{gameName}");
+
+            XElement newGameRecordNum = new XElement(XName.Get("NumOfRecords"));
+            newGameRecordNum.SetValue("0");
+
+            XElement newRecordListForGame = new XElement(XName.Get("RecordsInGameTime"));
+            newRecordListForGame.SetValue("");
+
+            newGameInHighScore.Add(newGameNameInHighScore);
+            newGameInHighScore.Add(newGameRecordNum);
+            newGameInHighScore.Add(newRecordListForGame);
+
+            List<XElement> highScoreGamesInList = gamesInHighScore.ToList();
+            highScoreGamesInList.Add(newGameInHighScore);
+
+            highScoreRoot.RemoveNodes();
+            highScoreRoot.Add(highScoreGamesInList);
+
+            highScoreDoc.RemoveNodes();
+            highScoreDoc.Add(highScoreRoot);
+
+            File.Delete(@"DepositInvestingGame\HighScore.xml");
+            highScoreDoc.Save(@"DepositInvestingGame\HighScore.xml");
+
+            #endregion
+
+            Console.Clear();
+            Console.WriteLine();
+            Console.WriteLine($"Your game ('{gameName}') has been saved successfully.");
+            Console.WriteLine("However, to play it, you must first restart the game (close and re-open the its window).");
+            Console.WriteLine();
+            Console.WriteLine("Enter anything to return to the main meun");
+            Console.WriteLine();
+            Console.ReadLine();
+
+            return;
+        }
+
+        #endregion
+
         #region Main Meun
 
         static void MainMeun(List<AGame> games)
@@ -1106,29 +1513,36 @@ namespace Deposit_Investing_Game
                 ChooseGameToPlayInTimeTrial(games);
             }
 
-            else if(input == "2")
+            if(input == "2")
+            {
+                CreatingCustomGame();
+
+                MainMeun(games);
+            }
+
+            else if(input == "3")
             {
                 ViewHighScore(games);
             }
 
-            else if (input == "3")
+            else if (input == "4")
             {
                 ChooseAGameToLoad();
             }
 
-            else if(input == "4")
+            else if(input == "5")
             {
                 BookScroll manual = new BookScroll(XDocument.Load(@"DepositInvestingGame\Manual\Manual.xml"));
                 manual.next("manual");
             }
 
-            else if(input == "5")
+            else if(input == "6")
             {
                 BookScroll tips = new BookScroll(XDocument.Load(@"DepositInvestingGame\Tips\Tips.xml"));
                 tips.next("tip");
             }
 
-            else if (input == "6")
+            else if (input == "7")
             {
                 BookScroll enrichement = new BookScroll(XDocument.Load(@"DepositInvestingGame\Enrichement\Enrichement.xml"));
                 enrichement.next("enrichement");

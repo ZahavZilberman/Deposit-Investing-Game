@@ -10,18 +10,19 @@ namespace Deposit_Investing_Game
     {
         #region ctor
 
-        public Bank(List<Deposit> bankDeposits)
+        public Bank(List<Deposit> bankDeposits, double bankStartMoney, string bankName)
         {
             deposits = new List<Deposit>();
             foreach(Deposit deposit in bankDeposits)
             {
                 deposits.Add(deposit);
             }
-            startGameMoney = 0;
-            money = 0;
+            startGameMoney = bankStartMoney;
+            money = bankStartMoney;
             numOfDeposits = deposits.Count;
             numOfDepositsAviliabe = deposits.Count;
             isBankrupt = false;
+            name = bankName;
         }
 
         #endregion

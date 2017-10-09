@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<AGame>
+
+  <Name>First Game</Name>
+  <RiskProfile>0.6</RiskProfile>
+  <MoneyToEnd>20000</MoneyToEnd>
+  <StartMoney>0</StartMoney>
+  <Income>1000</Income>
+  <BankName>Hamaya</BankName>
+
+  <Bank>
+    <StartBankMoney>1000</StartBankMoney>
+  </Bank>
+
+  <Deposit>
+
+    <Name>Flower</Name>
+    <TimeSpan>1</TimeSpan>
+    <DefaultInterestPerYear>1.02</DefaultInterestPerYear>
+
+  </Deposit>
+
+  <Deposit>
+
+    <Name>Bear</Name>
+    <TimeSpan>2</TimeSpan>
+    <DefaultInterestPerYear>1.025</DefaultInterestPerYear>
+
+  </Deposit>
+
+  <Deposit>
+
+    <Name>Kong</Name>
+    <TimeSpan>3</TimeSpan>
+    <DefaultInterestPerYear>1.03</DefaultInterestPerYear>
+
+  </Deposit>
+
+  <Deposit>
+
+    <Name>Monkey</Name>
+    <TimeSpan>4</TimeSpan>
+    <DefaultInterestPerYear>1.035</DefaultInterestPerYear>
+
+  </Deposit>
+
+  <Deposit>
+
+    <Name>Lizard</Name>
+    <TimeSpan>5</TimeSpan>
+    <DefaultInterestPerYear>1.04</DefaultInterestPerYear>
+
+  </Deposit>
+
+  <Deposit>
+
+    <Name>Elephant</Name>
+    <TimeSpan>6</TimeSpan>
+    <DefaultInterestPerYear>1.045</DefaultInterestPerYear>
+
+  </Deposit>
+
+  <Deposit>
+
+    <Name>Zebra</Name>
+    <TimeSpan>7</TimeSpan>
+    <DefaultInterestPerYear>1.05</DefaultInterestPerYear>
+
+  </Deposit>
+
+  <Deposit>
+
+    <Name>Lion</Name>
+    <TimeSpan>8</TimeSpan>
+    <DefaultInterestPerYear>1.055</DefaultInterestPerYear>
+
+  </Deposit>
+
+  <Deposit>
+
+    <Name>Crocodile</Name>
+    <TimeSpan>9</TimeSpan>
+    <DefaultInterestPerYear>1.06</DefaultInterestPerYear>
+
+  </Deposit>
+
+</AGame>

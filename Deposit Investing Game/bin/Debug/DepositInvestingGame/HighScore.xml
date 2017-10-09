@@ -3,8 +3,6 @@
   <Game>
     <GameName>First Game</GameName>
     <NumOfRecords>0</NumOfRecords>
-    <RecordsInGameTime>
-     
-    </RecordsInGameTime>
+    <RecordsInGameTime></RecordsInGameTime>
   </Game>
 </HighScoreTable>
