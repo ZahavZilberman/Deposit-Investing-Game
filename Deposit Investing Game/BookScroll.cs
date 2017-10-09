@@ -46,7 +46,10 @@ namespace Deposit_Investing_Game
             {
                 WritingText(Path.Value);
                 Console.WriteLine();
-                Console.WriteLine("enter 'u' to go to the next screen, or 'd' to go to the previous screen.");
+                Console.WriteLine("enter 'n' to go to the next screen, or 'p' to go to the previous screen.");
+                Console.WriteLine();
+                Console.WriteLine("(Those are shortcuts for 'next'[n] and 'previous'[p], by the way)");
+                Console.WriteLine();
                 MainMeunMessage();
                 Console.WriteLine();
                 string input = Console.ReadLine();
@@ -54,10 +57,10 @@ namespace Deposit_Investing_Game
 
                 switch (input.ToLower())
                 {
-                    case "d":
+                    case "p":
                         Path = RecentScreen.Element("PreviousScreen");
                         break;
-                    case "u":
+                    case "n":
                         Path = RecentScreen.Element("NextScreen");
                         break;
                     default:

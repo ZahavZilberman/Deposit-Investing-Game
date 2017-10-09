@@ -1,45 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Tips>
   <Screen>
-    <Path>DepositInvestingGame\Tips\Panic State.txt</Path>
-    <NextScreen>DepositInvestingGame\Tips\Relative instead of absloute.txt</NextScreen>
-    <PreviousScreen></PreviousScreen>
-    <Unlocked>False</Unlocked>
-  </Screen>
-  
-  <Screen>
     <Path>DepositInvestingGame\Tips\Relative instead of absloute.txt</Path>
     <NextScreen>DepositInvestingGame\Tips\Investement Considerations.txt</NextScreen>
     <PreviousScreen>DepositInvestingGame\Tips\Panic State.txt</PreviousScreen>
     <Unlocked>False</Unlocked>
   </Screen>
-  
   <Screen>
     <Path>DepositInvestingGame\Tips\Investement Considerations.txt</Path>
     <NextScreen>DepositInvestingGame\Tips\Gamebler fallacy.txt</NextScreen>
     <PreviousScreen>DepositInvestingGame\Tips\Relative instead of absloute.txt</PreviousScreen>
     <Unlocked>False</Unlocked>
   </Screen>
-  
   <Screen>
     <Path>DepositInvestingGame\Tips\Gamebler fallacy.txt</Path>
     <NextScreen>DepositInvestingGame\Tips\probability of 2 events.txt</NextScreen>
     <PreviousScreen>DepositInvestingGame\Tips\Investement Considerations.txt</PreviousScreen>
     <Unlocked>False</Unlocked>
   </Screen>
-  
   <Screen>
     <Path>DepositInvestingGame\Tips\probability of 2 events.txt</Path>
     <NextScreen>DepositInvestingGame\Tips\Compound interest.txt</NextScreen>
     <PreviousScreen>DepositInvestingGame\Tips\Gamebler fallacy.txt</PreviousScreen>
     <Unlocked>False</Unlocked>
   </Screen>
-
   <Screen>
     <Path>DepositInvestingGame\Tips\Compound interest.txt</Path>
     <NextScreen></NextScreen>
     <PreviousScreen>DepositInvestingGame\Tips\probability of 2 events.txt</PreviousScreen>
     <Unlocked>False</Unlocked>
   </Screen>
-  
+  <Screen>
+    <Path>DepositInvestingGame\Tips\Panic State.txt</Path>
+    <NextScreen>DepositInvestingGame\Tips\Relative instead of absloute.txt</NextScreen>
+    <PreviousScreen></PreviousScreen>
+    <Unlocked>False</Unlocked>
+  </Screen>
 </Tips>

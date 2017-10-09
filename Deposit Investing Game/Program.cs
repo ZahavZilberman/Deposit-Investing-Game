@@ -214,7 +214,7 @@ namespace Deposit_Investing_Game
 
             Console.WriteLine();
             Console.WriteLine("Enter 'd' to view all the deposits this game's bank has at the start of this game,");
-            Console.WriteLine("Or enter 'return' to return to selecting a game to play or view its details,");
+            Console.WriteLine("Or enter anything else to return to selecting a game to play or view its details");
             Console.WriteLine();
 
             string input2 = Console.ReadLine();
@@ -223,13 +223,9 @@ namespace Deposit_Investing_Game
             {
                 ViewDeposits(Agame.bank, "choosing a game to play", Agame, null, null, games);
             }
-            else if(input2.ToLower() == "return")
-            {
-                ChooseGameToPlayInTimeTrial(games);
-            }
             else
             {
-                ViewGameDetailsInTimeTrialMode(Agame, games);
+                ChooseGameToPlayInTimeTrial(games);
             }
         }
 
@@ -241,8 +237,8 @@ namespace Deposit_Investing_Game
         {
             Console.Clear();
             Console.WriteLine();
-            Console.WriteLine("The following are a list of all the games, each of the mentioned with his name.");
-            Console.WriteLine("Enter the name of the game you want to play,");
+            Console.WriteLine("The following are a list of all the games, each of the mentioned with his name and numbered.");
+            Console.WriteLine("Enter the number of the game you want to play,");
             Console.WriteLine("Or enter 'm' to return to the main meun:");
             Console.WriteLine();
             Console.WriteLine();
@@ -251,9 +247,9 @@ namespace Deposit_Investing_Game
             {
                 Console.WriteLine();
                 AGame currentGame = games.ElementAt(gameNum);
-                Console.WriteLine($"{gameNum + 1}. {currentGame.name}");
+                Console.WriteLine($"{gameNum + 1}. '{currentGame.name}'");
                 Console.WriteLine();
-                Console.WriteLine($"(Enter '{currentGame.name} info' [without the quote marks] to view information about this game)");
+                Console.WriteLine($"(Enter '{gameNum + 1} info' [without the quote marks] to view information about this game)");
                 Console.WriteLine();
             }
 
@@ -261,20 +257,22 @@ namespace Deposit_Investing_Game
 
             ReturnToMainMeun(input);
 
-            foreach (AGame Agame in games)
+            for(int gameNumInput = 0; gameNumInput < games.Count; gameNumInput++)
             {
-                if (input.ToLower() == Agame.name.ToLower())
+                if (input == (gameNumInput + 1).ToString())
                 {
                     #region when the player has choosen which game to play
 
-                    PlayerNameEnterAndTimeTrialGameStart(Agame);
+                    AGame choosenGame = games.ElementAt(gameNumInput);
+                    PlayerNameEnterAndTimeTrialGameStart(choosenGame);
 
                     #endregion
                 }
 
-                else if(input.ToLower() == $"{Agame.name.ToLower()} info")
+                else if(input == $"{(gameNumInput + 1).ToString()} info")
                 {
-                    ViewGameDetailsInTimeTrialMode(Agame, games);
+                    AGame choosenGame = games.ElementAt(gameNumInput);
+                    ViewGameDetailsInTimeTrialMode(choosenGame, games);
                 }
 
                 else
@@ -286,7 +284,7 @@ namespace Deposit_Investing_Game
 
         #endregion
 
-        #region Writing a bank's deposits (bank board)
+        #region Writing a bank's deposits
 
         public static void ViewDeposits(Bank bank, string mode, AGame game, Player player1 = null, TimeTrial timeTrial = null, List<AGame> games = null)
         {
@@ -374,7 +372,7 @@ namespace Deposit_Investing_Game
 
                 if (mode.ToLower() == "bank board")
                 {
-                    Console.WriteLine("Enter the name of a deposit to view all its current details,");
+                    Console.WriteLine("Enter the number of a deposit to view all its current details,");
                     Console.WriteLine("Or enter 'm' to return to choosing if to act/save/view other info/return to the main meun");
                     Console.WriteLine();
                     string input = Console.ReadLine();
@@ -386,7 +384,7 @@ namespace Deposit_Investing_Game
 
                     for (int choosenDepositNum = 0; choosenDepositNum < bank.deposits.Count; choosenDepositNum++)
                     {
-                        if (input.ToLower() == bank.deposits.ElementAt(choosenDepositNum).name.ToLower())
+                        if (input == (choosenDepositNum + 1).ToString())
                         {
                             ViewASingleDeposit(bank, bank.deposits.ElementAt(choosenDepositNum), game, player1, timeTrial);
                         }
@@ -552,7 +550,7 @@ namespace Deposit_Investing_Game
             Console.Clear();
             Console.WriteLine();
             Console.WriteLine("The following are a list of all the games, each of the mentioned with his name.");
-            Console.WriteLine("Enter the name of the game you want to view his high score table.");
+            Console.WriteLine("Enter the number of the game you want to view his high score table.");
             Console.WriteLine();
 
             for (int gameNum = 0; gameNum < games.Count; gameNum++)
@@ -567,12 +565,12 @@ namespace Deposit_Investing_Game
 
             #region checking user input and then opening the high score
 
-            foreach (AGame Agame in games)
+            for(int gameNum = 0; gameNum < games.Count; gameNum++)
             {
-                if(input.ToLower() == Agame.name.ToLower())
+                if(input == (gameNum + 1).ToString())
                 {
-                    HighScore highScore = new HighScore(Agame);
-                    highScore.next(Agame);
+                    HighScore highScore = new HighScore(games.ElementAt(gameNum));
+                    highScore.next(games.ElementAt(gameNum));
                 }
             }
 
@@ -675,7 +673,7 @@ namespace Deposit_Investing_Game
                 Console.WriteLine();
                 Console.ReadLine();
 
-                TimeTrial.NextTurn(game, player1, timeTrial);
+                return;
             }
         }
 
@@ -711,7 +709,7 @@ namespace Deposit_Investing_Game
             FileInfo[] files = info.GetFiles();
             foreach (FileInfo file in files)
             {
-                if (saveName == $"{file.Name.Remove(file.Name.Count() - 4, 4)}")
+                if (saveName.ToLower() == $"{file.Name.Remove(file.Name.Count() - 4, 4).ToLower()}")
                 {
                     Console.WriteLine();
                     Console.WriteLine("There's already a game save with this name in this mode! Overwrite it?");
@@ -723,6 +721,12 @@ namespace Deposit_Investing_Game
                     {
                         SavingProgress(game, player1, null, timeTrial);
                     }
+
+                    if(overwrite.ToLower() == "y")
+                    {
+                        return;
+                    }
+
                     else if (overwrite.ToLower() != "y" && overwrite.ToLower() != "n")
                     {
                         Console.Clear();
@@ -745,18 +749,27 @@ namespace Deposit_Investing_Game
 
         public static void ChooseAGameToLoad()
         {
+            List<string> modes = new List<string>();
+            modes.Add("Time Trial");
+
             Console.Clear();
             Console.WriteLine();
-            Console.WriteLine("Enter the name of the mode the saved game belongs to,");
+            Console.WriteLine("Enter the number of the mode the saved game belongs to,");
             Console.WriteLine("Or enter 'm' to return to the main meun: ");
             Console.WriteLine();
-            Console.WriteLine("Time Trial");
+
+            for(int modeNum = 0; modeNum < modes.Count; modeNum++)
+            {
+                Console.WriteLine($@"{modeNum + 1}. {modes.ElementAt(modeNum)}");
+                Console.WriteLine();
+            }
+
             Console.WriteLine();
             string input = Console.ReadLine();
 
             ReturnToMainMeun(input);
 
-            if(input.ToLower() == "Time Trial".ToLower())
+            if(input == "1")
             {
                 ChoosingAGameToLoadInTimeTrial();
             }
@@ -809,14 +822,19 @@ namespace Deposit_Investing_Game
 
                 ReturnToMainMeun(wantedSave);
 
-                foreach (FileInfo file in files)
-                {
-                    string actualFileName = $"{file.Name}".Remove((file.Name.Length - 4), 4);
+                FileInfo wantedFile = new FileInfo("a.t");
 
-                    if (wantedSave.ToLower() == actualFileName.ToLower())
+                for(int fileNum = 0; fileNum < files.Count(); fileNum++)
+                {
+                    if(wantedSave == (fileNum + 1).ToString())
                     {
-                        LoadTimeTrialGame(file);
+                        wantedFile = files.ElementAt(fileNum);
                     }
+                }
+
+                if(wantedFile.ToString() != "a.t")
+                {
+                    LoadTimeTrialGame(wantedFile);
                 }
 
                 ChoosingAGameToLoadInTimeTrial();
@@ -825,7 +843,7 @@ namespace Deposit_Investing_Game
 
         #endregion
 
-        #region The actual loading of a specific game (done, but maybe not tested enough)
+        #region The actual loading of a specific game
 
         public static void LoadTimeTrialGame(FileInfo saveFile)
         {
@@ -1042,7 +1060,7 @@ namespace Deposit_Investing_Game
             Console.WriteLine();
             Console.WriteLine($"Do you want to read the {textType} right now?");
             Console.WriteLine();
-            Console.WriteLine($"(Enter 'y' to read it, or 'n' to skip reading it)");
+            Console.WriteLine($"(Enter 'y' for 'yes', or 'n' for 'no')");
             Console.WriteLine();
 
             string input = Console.ReadLine();
@@ -1083,34 +1101,34 @@ namespace Deposit_Investing_Game
             WritingText(@"DepositInvestingGame\MainMeun.txt");
             string input = Console.ReadLine();
 
-            if(input.ToLower() == "time trial")
+            if(input == "1")
             {
                 ChooseGameToPlayInTimeTrial(games);
             }
 
-            else if(input.ToLower() == "high score")
+            else if(input == "2")
             {
                 ViewHighScore(games);
             }
 
-            else if (input.ToLower() == "load game")
+            else if (input == "3")
             {
                 ChooseAGameToLoad();
             }
 
-            else if(input.ToLower() == "manual")
+            else if(input == "4")
             {
                 BookScroll manual = new BookScroll(XDocument.Load(@"DepositInvestingGame\Manual\Manual.xml"));
                 manual.next("manual");
             }
 
-            else if(input.ToLower() == "tips")
+            else if(input == "5")
             {
                 BookScroll tips = new BookScroll(XDocument.Load(@"DepositInvestingGame\Tips\Tips.xml"));
                 tips.next("tip");
             }
 
-            else if (input.ToLower() == "enrichement")
+            else if (input == "6")
             {
                 BookScroll enrichement = new BookScroll(XDocument.Load(@"DepositInvestingGame\Enrichement\Enrichement.xml"));
                 enrichement.next("enrichement");
@@ -1129,7 +1147,7 @@ namespace Deposit_Investing_Game
 
         #region Main function
 
-        public static void Main()
+        static void Main()
         {
             Console.Title = "Deposit Investing Game";
             Console.SetWindowSize(110, 50);

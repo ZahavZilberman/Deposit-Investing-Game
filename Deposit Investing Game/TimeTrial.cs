@@ -42,32 +42,36 @@ namespace Deposit_Investing_Game
             Console.WriteLine();
             Console.WriteLine($"Sum of money that isn't invested: {player1.savingsAviliabe} dollars");
             Console.WriteLine();
-            Console.WriteLine("Enter 'a' to make an action (your move at this turn),");
+            Console.WriteLine($"Enter the number of your choice out of the following:");
             Console.WriteLine();
-            Console.WriteLine("Or enter 'v' to view:");
-            Console.WriteLine("the details of the game/the bank board/your player status in this game");
+            Console.WriteLine("1. Make an action (your move at this turn).");
             Console.WriteLine();
-            Console.WriteLine("Or enter 's' to save your state in the current game,");
+            Console.WriteLine("2. View the following:");
+            Console.WriteLine("the details of the game, the bank board and your player status in this game.");
             Console.WriteLine();
-            Console.WriteLine("Or enter 'm' to return to the main meun without saving your progress in this game.");
+            Console.WriteLine("3. Save your state in the current game.");
+            Console.WriteLine();
+            Console.WriteLine("You also may enter 'm' to return to the main meun without saving (any unsaved data will be lost)");
             Console.WriteLine();
             string input = Console.ReadLine();
 
             ReturnToMainMeun(input);
 
-            if(input.ToLower() == "a")
+            if(input.ToLower() == "1")
             {
                 ChoosingAnAction(game, player1, timeTrial);
             }
 
-            else if (input.ToLower() == "v")
+            else if (input.ToLower() == "2")
             {
                 ViewingAllInfo(player1, game, timeTrial);
             }
 
-            else if (input.ToLower() == "s")
+            else if (input.ToLower() == "3")
             {
                 SavingProgress(game, player1, null, timeTrial);
+
+                NextTurn(game, player1, timeTrial);
             }
 
             else
@@ -86,32 +90,34 @@ namespace Deposit_Investing_Game
         {
             Console.Clear();
             Console.WriteLine();
-            Console.WriteLine("Choose what to view its information: ");
+            Console.WriteLine("Choose the number of what to view its information: ");
             Console.WriteLine();
             Console.WriteLine();
-            Console.WriteLine("Enter 'd' to view the 'bank board' - deposits's details & states, and the bank status.");
+            Console.WriteLine("1. View the 'bank board' - deposits's details & states, and the bank status.");
             Console.WriteLine();
-            Console.WriteLine("Enter 'p' to view your player status: your savings and deposits.");
+            Console.WriteLine("2. View your player status: your savings and deposits.");
             Console.WriteLine();
-            Console.WriteLine("Enter 'g' to view the current game's general details.");
+            Console.WriteLine("3. to view the current game's general details.");
             Console.WriteLine();
-            Console.WriteLine("Enter 'c' to go back to choosing to act/save/return to main meun.");
+            Console.WriteLine("Or enter 'm' to go back to choosing to act/save/return to main meun.");
             Console.WriteLine();
             string input = Console.ReadLine();
             
-            if(input.ToLower() == "d")
+            if(input == "1")
             {
                 ViewDeposits(game.bank, "bank board", game, player1, timeTrial);
             }
-            else if(input.ToLower() == "p")
+            else if(input == "2")
             {
                 ViewPlayerStatus(player1, game, timeTrial);
             }
-            else if (input.ToLower() == "g")
+            else if (input == "3")
             {
                 ViewingTheGameDetails(game, player1, timeTrial);
+
+                NextTurn(game, player1, timeTrial);
             }
-            else if (input.ToLower() == "c")
+            else if (input.ToLower() == "m")
             {
                 NextTurn(game, player1, timeTrial);
             }
@@ -157,20 +163,22 @@ namespace Deposit_Investing_Game
                 Console.WriteLine();
             }
 
-            Console.WriteLine("Enter 'c' to go back into choosing if to act/save/view other info/return to the main meun.");
+            Console.WriteLine("Enter 'm' to go back into choosing if to act/save/view other info/return to the main meun.");
             Console.WriteLine();
             string input = Console.ReadLine();
 
-            if (input.ToLower() == "c")
+            if (input.ToLower() == "m")
             {
                 NextTurn(game, player1, timeTrial);
             }
 
-            if(input.ToLower() == "d")
+            else if(input.ToLower() == "d")
             {
                 if (doesThePlayerEvenHaveDeposits)
                 {
                     ViewPlayerDeposits(game, player1, timeTrial);
+
+                    ViewPlayerStatus(player1, game, timeTrial);
                 }
                 else
                 {
@@ -217,8 +225,6 @@ namespace Deposit_Investing_Game
             Console.WriteLine("Enter anything to return viewing the player's general status.");
             Console.WriteLine();
             Console.ReadLine();
-
-            ViewPlayerStatus(player1, game, timeTrial);
         }
 
         #endregion
@@ -234,8 +240,6 @@ namespace Deposit_Investing_Game
             Console.WriteLine("Enter anything in order to return to choose if to act/save/view other info/return to main meun");
             Console.WriteLine();
             Console.ReadLine();
-
-            NextTurn(game, player1, timeTrial);
         }
 
         #endregion
@@ -248,15 +252,16 @@ namespace Deposit_Investing_Game
         {
             Console.Clear();
             Console.WriteLine();
-            Console.WriteLine("Choose the action to take in this turn");
-            Console.WriteLine("(You may enter 'm' to return to choose if to act/view/save/return to main meun):");
+            Console.WriteLine("Enter the number of the action to take in this turn:");
             Console.WriteLine();
             Console.WriteLine();
-            Console.WriteLine("1. Buy a deposit (enter 'b' to do this)");
+            Console.WriteLine("1. Buy a deposit");
             Console.WriteLine();
-            Console.WriteLine("2. Ask to release a deposit you own (enter 'a' to do this)");
+            Console.WriteLine("2. Ask to release a deposit you own");
             Console.WriteLine();
-            Console.WriteLine("3. Do nothing (enter 'd' to do this)");
+            Console.WriteLine("3. Do nothing");
+            Console.WriteLine();
+            Console.WriteLine("You also may enter 'm' to return to choose if to act/view/save/return to main meun.");
             Console.WriteLine();
 
             string actionChoosen = Console.ReadLine();
@@ -266,7 +271,7 @@ namespace Deposit_Investing_Game
                 NextTurn(game, player, timeTrial);
             }
 
-            else if (actionChoosen.ToLower() == "b")
+            else if (actionChoosen == "1")
             {
                 if(player.savingsAviliabe == 0)
                 {
@@ -283,12 +288,12 @@ namespace Deposit_Investing_Game
                 BuyingADeposit(player, game, timeTrial);
             }
 
-            else if (actionChoosen.ToLower() == "a")
+            else if (actionChoosen == "2")
             {
                 ChooseADepositToRelease(player, game, timeTrial);
             }
 
-            else if (actionChoosen.ToLower() == "d")
+            else if (actionChoosen == "3")
             {
                 DoingNothing(game, player, timeTrial);
             }
@@ -332,7 +337,7 @@ namespace Deposit_Investing_Game
             Console.WriteLine("You successfully sit on your ass for 6 months not even calling the bank,");
             Console.WriteLine("while proably singing 'the lazy song' or 'gangam style'..");
             Console.WriteLine();
-            Console.WriteLine("Enter anything to conitnute to your next turn");
+            Console.WriteLine("Enter anything to continue to your next turn");
             Console.WriteLine();
             Console.ReadLine();
 
@@ -355,9 +360,10 @@ namespace Deposit_Investing_Game
 
             Console.WriteLine("To view the full details of every deposit, go back to view the bank board");
             Console.WriteLine();
-            Console.WriteLine("Enter the name of the deposit you wish to buy.");
+            Console.WriteLine("Enter the number of the deposit you wish to buy.");
             Console.WriteLine();
-            Console.WriteLine("You may also enter 'v' to go stright into viewing the bank board,");
+            Console.WriteLine("Or enter 'v' to go stright into viewing the bank board,");
+            Console.WriteLine();
             Console.WriteLine("Or enter 'm' to return to choosing if to act/view/save/return to the main meun.");
             Console.WriteLine();
 
@@ -373,11 +379,11 @@ namespace Deposit_Investing_Game
                 ViewDeposits(game.bank, "bank board", game, player, timeTrial);
             }
 
-            foreach(Deposit deposit in game.bank.deposits)
+            for(int depositNum = 0; depositNum < game.bank.deposits.Count; depositNum++)
             {
-                if(input.ToLower() == deposit.name.ToLower())
+                if(input == $"{(depositNum + 1).ToString()}")
                 {
-                    if(deposit.whoItBelongsTo == player.name)
+                    if(game.bank.deposits.ElementAt(depositNum).whoItBelongsTo == player.name)
                     {
                         Console.WriteLine();
                         Console.WriteLine("You alredy own this deposit!");
@@ -385,13 +391,11 @@ namespace Deposit_Investing_Game
                         Console.WriteLine("Enter anything to return to choosing a deposit to buy.");
                         Console.WriteLine();
                         Console.ReadLine();
-
-                        BuyingADeposit(player, game, timeTrial);
                     }
 
-                    else if(deposit.whoItBelongsTo == game.bank.name)
+                    else if ((game.bank.deposits.ElementAt(depositNum).whoItBelongsTo == game.bank.name))
                     {
-                        PuttingMoneyIntoChoosenDeposit(player, game, timeTrial, deposit);
+                        PuttingMoneyIntoChoosenDeposit(player, game, timeTrial, game.bank.deposits.ElementAt(depositNum));
                     }
 
                     // There's no way for a clash between players in this mode
@@ -416,14 +420,14 @@ namespace Deposit_Investing_Game
             Console.WriteLine($"And that's out of the {player.savingsAviliabe} dollars you have uninvested right now!");
             Console.WriteLine();
             Console.WriteLine("Enter the amount of money you want to put in this deposit,");
-            Console.WriteLine("Or enter 'c' to return choosing a deposit to buy.");
+            Console.WriteLine("Or enter 'm' to return choosing a deposit to buy.");
             Console.WriteLine();
             Console.WriteLine("Note: if the game doesn't allow you to put 60% of your money, it's a small bug - try to put 1 dollar less than that)");
             Console.WriteLine();
 
             string moneyInputForDeposit = Console.ReadLine();
 
-            if(moneyInputForDeposit.ToLower() == "c")
+            if(moneyInputForDeposit.ToLower() == "m")
             {
                 BuyingADeposit(player, game, timeTrial);
             }
@@ -435,10 +439,10 @@ namespace Deposit_Investing_Game
             if (!double.TryParse(moneyInputForDeposit, out moneyForDeposit))
             {
                 Console.WriteLine();
-                Console.WriteLine("That's neither a number nor 'c'!");
+                Console.WriteLine("That's neither a number nor 'm'!");
                 Console.WriteLine();
                 Console.WriteLine("Enter anything to return choosing the amount of money to put in this deposit,");
-                Console.WriteLine("And input either a number or 'c' next time.");
+                Console.WriteLine("And input either a number or 'm' next time.");
                 Console.WriteLine();
                 Console.ReadLine();
 
@@ -582,7 +586,7 @@ namespace Deposit_Investing_Game
 
             Console.WriteLine("To view the full details of every deposit, go back to view the bank board");
             Console.WriteLine();
-            Console.WriteLine("Enter the name of the deposit you wish to ask the bank to release.");
+            Console.WriteLine("Enter the number of the deposit you wish to ask the bank to release.");
             Console.WriteLine();
             Console.WriteLine("You may also enter 'v' to go stright into viewing the bank board,");
             Console.WriteLine("Or enter 'm' to return to choosing if to act/view/save/return to the main meun.");
@@ -599,12 +603,12 @@ namespace Deposit_Investing_Game
             {
                 ViewDeposits(game.bank, "bank board", game, player, timeTrial);
             }
-
-            foreach (Deposit deposit in game.bank.deposits)
+           
+            for (int depositNum = 0; depositNum < game.bank.deposits.Count; depositNum++)
             {
-                if (input.ToLower() == deposit.name.ToLower())
+                if (input == $"{(depositNum + 1).ToString()}")
                 {
-                    if (deposit.whoItBelongsTo.ToLower() == game.bank.name.ToLower())
+                    if (game.bank.deposits.ElementAt(depositNum).whoItBelongsTo.ToLower() == game.bank.name.ToLower())
                     {
                         Console.WriteLine();
                         Console.WriteLine("You don't have this deposit!");
@@ -612,13 +616,11 @@ namespace Deposit_Investing_Game
                         Console.WriteLine("Enter anything to return to choosing a deposit to ask to release.");
                         Console.WriteLine();
                         Console.ReadLine();
-
-                        ChooseADepositToRelease(player, game, timeTrial);
                     }
 
-                    else if (deposit.whoItBelongsTo.ToLower() == player.name.ToLower())
+                    else if (game.bank.deposits.ElementAt(depositNum).whoItBelongsTo.ToLower() == player.name.ToLower())
                     {
-                        BankAnswerForReleaseRequest(player, game, timeTrial, deposit);
+                        BankAnswerForReleaseRequest(player, game, timeTrial, game.bank.deposits.ElementAt(depositNum));
                     }
 
                     // There's no way for a clash between players in this mode
@@ -705,6 +707,40 @@ namespace Deposit_Investing_Game
 
                     game.bank.isBankrupt = true;
                     player.savingsAviliabe = player.savingsAviliabe + choosenDeposit.amountOfMoneyPutInDeposit + game.bank.money;
+                    player.depositsOwned.RemoveAt(player.depositsOwned.IndexOf(choosenDeposit));
+
+                #region What to do if the bank went bankrupt?
+
+                List<Deposit> playerDepositsToRemove = new List<Deposit>();
+
+                foreach (Deposit DepositUsedToBeInBank in game.bank.deposits)
+                {
+                    foreach (Deposit playerDeposit in player.depositsOwned)
+                    {
+                        if (DepositUsedToBeInBank.name == playerDeposit.name)
+                        {
+                            playerDepositsToRemove.Add(playerDeposit);
+                        }
+                    }
+                }
+
+                foreach (Deposit depositToRemove in playerDepositsToRemove)
+                {
+                    player.savingsAviliabe = player.savingsAviliabe + depositToRemove.amountOfMoneyPutInDeposit;
+                }
+
+                player.depositsOwned.RemoveRange(0, player.depositsOwned.Count);
+
+                List<AGame> games = WritingAllGamesInformation();
+
+                Bank newBank = ReturnBankToDefault(games, "First Game");
+
+                game.bank = newBank;
+
+                TheDataUpdatedWhateverDepositUpdateHappenedOrNot(
+                player, game, timeTrial);
+
+                #endregion
                 }
 
                 int depositIndexForTheBank = game.bank.deposits.IndexOf(choosenDeposit);
@@ -1085,23 +1121,27 @@ namespace Deposit_Investing_Game
             Console.WriteLine($"The riskiest calculated deposit you have is '{depositToRelease.name}',");
             Console.WriteLine($"And thus, you are now going to release it.");
             Console.WriteLine();
-            Console.WriteLine($"Enter 'c' to continue and to release that deposit,");
-            Console.WriteLine("Or enter 's' to save the game state,");
-            Console.WriteLine("Or enter 'm' to return to the main meun");
+            Console.WriteLine("Enter the number of your choice out of the following:");
+            Console.WriteLine();
+            Console.WriteLine($"1. Continue and release that deposit.");
+            Console.WriteLine("2. Save the game state.");
+            Console.WriteLine("You may also enter 'm' to return to the main meun");
             Console.WriteLine();
 
             string input = Console.ReadLine();
 
             ReturnToMainMeun(input);
 
-            if (input.ToLower() == "c")
+            if (input == "1")
             {
                 BankAnswerForReleaseRequest(player, game, timeTrial, depositToRelease);
             }
 
-            else if (input.ToLower() == "s")
+            else if (input == "2")
             {
                 SavingProgress(game, player, null, timeTrial);
+
+                NextTurn(game, player, timeTrial);
             }
 
             else
