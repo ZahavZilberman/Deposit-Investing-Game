@@ -497,7 +497,6 @@ namespace Deposit_Investing_Game
 
         public static Bank ReturnBankToDefault(List<AGame> games, string gameName)
         {
-            #region First game
 
             foreach(AGame game in games)
             {
@@ -506,8 +505,6 @@ namespace Deposit_Investing_Game
                     return game.bank;
                 }
             }
-
-            #endregion
 
             throw new Exception("Game not found");
         }
@@ -1000,7 +997,7 @@ namespace Deposit_Investing_Game
             currentScreen.Add(previousScreen);
             currentScreen.Add(unlocked);
 
-            theScreens.RemoveAt(theScreens.IndexOf(currentScreen));
+            theScreens.RemoveAt(theScreens.IndexOf(theScreens.Find(x => x.Element("Path").Value == currentScreen.Element("Path").Value)));
             theScreens.Add(currentScreen);
 
             root.RemoveNodes();
@@ -1104,7 +1101,7 @@ namespace Deposit_Investing_Game
                 ReturnToMainMeun(riskProfile);
             }
 
-            while(!(0 < double.Parse(riskProfile) && double.Parse(riskProfile) < 1))
+            while(!(0 < double.Parse(riskProfile) && double.Parse(riskProfile) <= 1))
             {
                 Console.WriteLine();
                 Console.WriteLine("The risk profile must be between 0 and 1, which is the 'risk profile precentage' divided by 100.");

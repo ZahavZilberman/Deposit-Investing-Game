@@ -88,7 +88,7 @@ namespace Deposit_Investing_Game
                     Console.WriteLine();
                     Console.WriteLine($"Mode: {mode.Value}");
                     Console.WriteLine($"By player: '{player.Value}'");
-                    Console.WriteLine($"Won after: {year.Value} years and {month.Value} months");
+                    Console.WriteLine($"Won at: year {year.Value}, month {month.Value}");
                     Console.WriteLine($"Additional unneccesary money left: {additionalMoney.Value} dollars.");
                     Console.WriteLine();
                 }

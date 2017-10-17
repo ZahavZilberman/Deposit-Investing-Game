@@ -733,7 +733,7 @@ namespace Deposit_Investing_Game
 
                 List<AGame> games = WritingAllGamesInformation();
 
-                Bank newBank = ReturnBankToDefault(games, "First Game");
+                Bank newBank = ReturnBankToDefault(games, game.name);
 
                 game.bank = newBank;
 
@@ -788,7 +788,7 @@ namespace Deposit_Investing_Game
 
                     if(0 <= monthsOfReleaseDepositTime - monthsOfGameTime && monthsOfReleaseDepositTime - monthsOfGameTime < 6)
                     {
-                        #region then release the deposit for the player here! (do code review for this)
+                        #region then release the deposit for the player here!
 
                         int whereIsThisDepositForThePlayer = player.depositsOwned.IndexOf(depositOfPlayer);
 
@@ -874,7 +874,7 @@ namespace Deposit_Investing_Game
 
                                 List<AGame> games = WritingAllGamesInformation();
 
-                                Bank newBank = ReturnBankToDefault(games, "First Game");
+                                Bank newBank = ReturnBankToDefault(games, game.name);
 
                                 game.bank = newBank;
 
@@ -1178,10 +1178,39 @@ namespace Deposit_Investing_Game
             XElement recentEnrichementNextScreen = new XElement(RecentEnrichement.Element("NextScreen"));
             XElement recentEnrichementPreviousScreen = new XElement(RecentEnrichement.Element("PreviousScreen"));
 
+            List<XElement> allTheTips = new List<XElement>(allTips.ToList());
 
-            if (game.name == "First Game" && timeTrial != null)
+            #region Level 1
+
+            List<XElement> level1TipList = new List<XElement>();
+
+            XElement panic = new XElement(allTheTips.Find(x => x.Element("Path").Value == @"DepositInvestingGame\Tips\Panic State.txt"));
+            XElement relativeInsteadOf = new XElement(allTheTips.Find(x => x.Element("Path").Value == @"DepositInvestingGame\Tips\Relative instead of absloute.txt"));
+            XElement investementConsiderations = new XElement(allTheTips.Find(x => x.Element("Path").Value == @"DepositInvestingGame\Tips\Investement Considerations.txt"));
+
+            level1TipList.Add(panic);
+            level1TipList.Add(relativeInsteadOf);
+            level1TipList.Add(investementConsiderations);
+
+            #endregion
+
+            #region Level 2
+
+            List<XElement> level2TipList = new List<XElement>();
+
+            XElement gamblerFallacy = new XElement(allTheTips.Find(x => x.Element("Path").Value == @"DepositInvestingGame\Tips\Gamebler fallacy.txt"));
+            XElement probabilityOf2Events = new XElement(allTheTips.Find(x => x.Element("Path").Value == @"DepositInvestingGame\Tips\probability of 2 events.txt"));
+            XElement compoundInterest = new XElement(allTheTips.Find(x => x.Element("Path").Value == @"DepositInvestingGame\Tips\Compound interest.txt"));
+
+            level2TipList.Add(gamblerFallacy);
+            level2TipList.Add(probabilityOf2Events);
+            level2TipList.Add(compoundInterest);
+
+            #endregion
+
+            if (game.name == "Level 2" && timeTrial != null)
             {
-                foreach(XElement tip in allTips)
+                foreach (XElement tip in allTips)
                 {
                     XElement currentTipUnlocked = new XElement(tip.Element("Unlocked"));
 
@@ -1204,11 +1233,14 @@ namespace Deposit_Investing_Game
                         MessagesPopUpWhenAPlayerUnlocksTipOrEnrichement("tip", RecentTipPath.Value.ToString(), theTipName);
                     }
                 }
+            }
 
-                foreach(XElement enrichement in allEnrichements)
+            if (game.name == "Level 3" && timeTrial != null)
+            {
+                foreach (XElement enrichement in allEnrichements)
                 {
                     XElement currentEnrichementUnlocked = new XElement(enrichement.Element("Unlocked"));
-                    
+
                     if (!bool.Parse(currentEnrichementUnlocked.Value))
                     {
                         RecentEnrichementPath = new XElement(enrichement.Element("Path"));
