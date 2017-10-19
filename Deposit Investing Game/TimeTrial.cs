@@ -636,7 +636,9 @@ namespace Deposit_Investing_Game
 
         public static void BankAnswerForReleaseRequest(Player player, AGame game, TimeTrial timeTrial, Deposit choosenDeposit)
         {
-                double howMuchTheBankWillPayYou = 0;
+            player.RowOfChoosingToDoNothing = 0;
+
+            double howMuchTheBankWillPayYou = 0;
                 double theMulct = 0;
 
                 int whereIsThisDepositForThePlayer = player.depositsOwned.IndexOf(choosenDeposit);

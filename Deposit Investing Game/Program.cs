@@ -556,11 +556,14 @@ namespace Deposit_Investing_Game
             Console.Clear();
             Console.WriteLine();
             Console.WriteLine("Enter the name of the state you want to save,");
-            Console.WriteLine("Or enter 'm' to return to the main meun");
+            Console.WriteLine("Or enter 'm' to return to choose if to do an action/view info/return to the main meun");
             Console.WriteLine();
             string saveName = Console.ReadLine();
 
-            ReturnToMainMeun(saveName);
+            if(saveName.ToLower() == "m" && timeTrial != null)
+            {
+                TimeTrial.NextTurn(game, player1, timeTrial);
+            }
 
             if(timeTrial != null)
             {
