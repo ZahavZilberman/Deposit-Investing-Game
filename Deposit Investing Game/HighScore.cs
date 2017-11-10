@@ -52,7 +52,7 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter anything to return to the main meun.");
                 Console.WriteLine();
                 Console.ReadLine();
-                ReturnToMainMeun("m");
+                return;
             }
 
             #endregion
@@ -107,10 +107,12 @@ namespace Deposit_Investing_Game
                 if (input.ToLower() == "d")
                 {
                     ViewDeposits(game.bank, "high score", game);
+
+                    next(game);
                 }
                 else
                 {
-                    ReturnToMainMeun("m");
+                    return;
                 }
 
                 #endregion

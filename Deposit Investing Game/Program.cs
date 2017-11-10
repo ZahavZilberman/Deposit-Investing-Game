@@ -54,7 +54,11 @@ namespace Deposit_Investing_Game
             Console.WriteLine("You can also enter 'm' to return to the main meun.");
             Console.WriteLine();
             string name = Console.ReadLine();
-            ReturnToMainMeun(name);
+
+            if(ShouldIReturnToMeunByEndingFunction(name))
+            {
+                return;
+            }
 
             Player player1 = new Player(game, name);
 
@@ -63,13 +67,15 @@ namespace Deposit_Investing_Game
             Console.WriteLine();
             Console.WriteLine($"You will now be transfered to your 1st turn in this turn-based game.");
             Console.WriteLine();
-            Console.WriteLine("Enter anything to start playing!");
+            Console.WriteLine("Enter anything to start getting owned by the bank!");
             Console.WriteLine();
             Console.ReadLine();
 
             Console.Clear();
             TimeTrial timeTrialGame = new TimeTrial();
             TimeTrial.NextTurn(game, player1, timeTrialGame);
+
+            return;
         }
 
         #endregion
@@ -82,12 +88,14 @@ namespace Deposit_Investing_Game
             Console.WriteLine();
         }
 
-        public static void ReturnToMainMeun(string input)
+        public static bool ShouldIReturnToMeunByEndingFunction(string input)
         {
-            if(input.ToLower() == "m")
+            if (input.ToLower() == "m")
             {
-                getTheGamesAndStart();
+                return true;
             }
+
+            return false;
         }
 
         #endregion
@@ -109,74 +117,89 @@ namespace Deposit_Investing_Game
 
         public static void EnteringScoreIntoHighScoreInTimeTrial(AGame game, Player player, TimeTrial timeTrial)
         {
+            bool gameFound = false;
+
             XDocument DataBase = new XDocument(XDocument.Load(@"DepositInvestingGame\HighScore.xml"));
 
             XElement root = DataBase.Root;
 
             List<XElement> games = new List<XElement>(root.Elements("Game"));
 
+            XElement relevantGame = null;
+
             foreach (XElement Agame in games)
             {
                 if (Agame.Element("GameName").Value.ToLower() == game.name.ToLower())
                 {
-                    XElement GameName = new XElement(Agame.Element("GameName"));
-                    XElement NumOfRecords = new XElement(Agame.Element("NumOfRecords"));
-                    XElement Records = new XElement(Agame.Element("RecordsInGameTime"));
-                    //List<XElement> records = new List<XElement>(Record.Elements("Record"));
-
-                    int newNumOfRecords = (int.Parse(NumOfRecords.Value)) + 1;
-                    NumOfRecords.SetValue($"{(newNumOfRecords).ToString()}");
-
-                    XElement record = new XElement(XName.Get("Record"));
-
-                    XElement month = new XElement(XName.Get("Month"));
-                    month.SetValue(timeTrial.month);
-
-                    XElement year = new XElement(XName.Get("Year"));
-                    year.SetValue(timeTrial.year);
-
-                    XElement playerName = new XElement(XName.Get("Player"));
-                    playerName.SetValue(player.name);
-
-                    XElement mode = new XElement(XName.Get("Mode"));
-                    mode.SetValue("Time trial");
-
-                    XElement additionalMoneyLeft = new XElement(XName.Get("Money"));
-                    additionalMoneyLeft.SetValue($"{Math.Round((player.savingsAviliabe - game.moneyToEndGame)).ToString()}");
-
-                    record.Add(playerName);
-                    record.Add(month);
-                    record.Add(year);
-                    record.Add(mode);
-                    record.Add(additionalMoneyLeft);
-
-                    Records.Add(record);
-
-                    Agame.RemoveNodes();
-                    Agame.Add(GameName);
-                    Agame.Add(NumOfRecords);
-                    Agame.Add(Records);
-
-                    games.RemoveAt(games.IndexOf(Agame));
-                    games.Add(Agame);
-
-                    root.RemoveNodes();
-                    root.Add(games);
-
-                    DataBase.ReplaceNodes(root);
-                    File.Delete(@"DepositInvestingGame\HighScore.xml");
-                    DataBase.Save(@"DepositInvestingGame\HighScore.xml");
-
-                    Console.Clear();
-                    Console.WriteLine();
-                    Console.WriteLine("Your score has been sumbmitted.");
-                    Console.WriteLine();
-                    Console.WriteLine("You can view it by going into the 'high score' chart of this game via the main meun.");
-                    Console.WriteLine();
-
-                    return;
+                    gameFound = true;
+                    relevantGame = Agame;
                 }
             }
+
+            if (gameFound)
+            {
+                #region The actual update
+
+                XElement GameName = new XElement(relevantGame.Element("GameName"));
+                XElement NumOfRecords = new XElement(relevantGame.Element("NumOfRecords"));
+                XElement Records = new XElement(relevantGame.Element("RecordsInGameTime"));
+
+                int newNumOfRecords = (int.Parse(NumOfRecords.Value)) + 1;
+                NumOfRecords.SetValue($"{(newNumOfRecords).ToString()}");
+
+                XElement record = new XElement(XName.Get("Record"));
+
+                XElement month = new XElement(XName.Get("Month"));
+                month.SetValue(timeTrial.month);
+
+                XElement year = new XElement(XName.Get("Year"));
+                year.SetValue(timeTrial.year);
+
+                XElement playerName = new XElement(XName.Get("Player"));
+                playerName.SetValue(player.name);
+
+                XElement mode = new XElement(XName.Get("Mode"));
+                mode.SetValue("Time trial");
+
+                XElement additionalMoneyLeft = new XElement(XName.Get("Money"));
+                additionalMoneyLeft.SetValue($"{Math.Round((player.savingsAviliabe - game.moneyToEndGame)).ToString()}");
+
+                record.Add(playerName);
+                record.Add(month);
+                record.Add(year);
+                record.Add(mode);
+                record.Add(additionalMoneyLeft);
+
+                Records.Add(record);
+
+                relevantGame.RemoveNodes();
+                relevantGame.Add(GameName);
+                relevantGame.Add(NumOfRecords);
+                relevantGame.Add(Records);
+
+                games.RemoveAt(games.IndexOf(relevantGame));
+                games.Add(relevantGame);
+
+                root.RemoveNodes();
+                root.Add(games);
+
+                DataBase.ReplaceNodes(root);
+                File.Delete(@"DepositInvestingGame\HighScore.xml");
+                DataBase.Save(@"DepositInvestingGame\HighScore.xml");
+
+                #endregion
+
+                Console.Clear();
+                Console.WriteLine();
+                Console.WriteLine("Your score has been sumbmitted.");
+                Console.WriteLine();
+                Console.WriteLine("You can view it by going into the 'high score' chart of this game via the main meun.");
+                Console.WriteLine();
+
+                return;
+            }
+
+            throw new Exception("Game not found");
         }
 
         #endregion
@@ -223,10 +246,13 @@ namespace Deposit_Investing_Game
             {
                 ViewDeposits(Agame.bank, "choosing a game to play", Agame, null, null, games);
             }
+
             else
             {
                 ChooseGameToPlayInTimeTrial(games);
             }
+
+            return;
         }
 
         #endregion
@@ -255,29 +281,70 @@ namespace Deposit_Investing_Game
 
             string input = Console.ReadLine();
 
-            ReturnToMainMeun(input);
+            if(ShouldIReturnToMeunByEndingFunction(input))
+            {
+                return;
+            }
+
+            AGame choosenGame = null;
+
+            bool doesThePlayerWantToPlay = true;
 
             for(int gameNumInput = 0; gameNumInput < games.Count; gameNumInput++)
             {
+                
                 if (input == (gameNumInput + 1).ToString())
                 {
-                    #region when the player has choosen which game to play
-
-                    AGame choosenGame = games.ElementAt(gameNumInput);
-                    PlayerNameEnterAndTimeTrialGameStart(choosenGame);
-
-                    #endregion
+                    choosenGame = games.ElementAt(gameNumInput);
                 }
 
-                else if(input == $"{(gameNumInput + 1).ToString()} info")
+                else if(input.ToLower() == $"{(gameNumInput + 1).ToString()} info")
                 {
-                    AGame choosenGame = games.ElementAt(gameNumInput);
-                    ViewGameDetailsInTimeTrialMode(choosenGame, games);
+                    choosenGame = games.ElementAt(gameNumInput);
+                    doesThePlayerWantToPlay = false;
                 }
 
             }
 
-            ChooseGameToPlayInTimeTrial(games);
+            while (choosenGame == null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Invalid input. Enter again:");
+                Console.WriteLine();
+                input = Console.ReadLine();
+
+                if (ShouldIReturnToMeunByEndingFunction(input))
+                {
+                    return;
+                }
+
+                for (int gameNumInput = 0; gameNumInput < games.Count; gameNumInput++)
+                {
+
+                    if (input == (gameNumInput + 1).ToString())
+                    {
+                        choosenGame = games.ElementAt(gameNumInput);
+                    }
+
+                    else if (input.ToLower() == $"{(gameNumInput + 1).ToString()} info")
+                    {
+                        choosenGame = games.ElementAt(gameNumInput);
+                        doesThePlayerWantToPlay = false;
+                    }
+                }
+            }
+
+            if (doesThePlayerWantToPlay)
+            {
+                PlayerNameEnterAndTimeTrialGameStart(choosenGame);
+            }
+
+            else if (!doesThePlayerWantToPlay)
+            {
+                ViewGameDetailsInTimeTrialMode(choosenGame, games);
+            }
+
+            return;
         }
 
         #endregion
@@ -319,8 +386,6 @@ namespace Deposit_Investing_Game
                     Console.WriteLine($"Enter anything to return to view the records for the game called '{game.name}'.");
                     Console.WriteLine();
                     Console.ReadLine();
-                    HighScore highScoreAgain = new HighScore(game);
-                    highScoreAgain.next(game);
                 }
 
                 else if (mode.ToLower() == "choosing a game to play")
@@ -365,6 +430,7 @@ namespace Deposit_Investing_Game
                         Console.WriteLine();
                     }
                 }
+
                 Console.WriteLine();
                 Console.WriteLine();
 
@@ -375,9 +441,35 @@ namespace Deposit_Investing_Game
                     Console.WriteLine();
                     string input = Console.ReadLine();
 
+                    bool DidTheInputIncludeADeposit = false;
+
+                    for (int choosenDepositNum = 0; choosenDepositNum < bank.deposits.Count; choosenDepositNum++)
+                    {
+                        if (input == (choosenDepositNum + 1).ToString())
+                        {
+                            DidTheInputIncludeADeposit = true;
+                        }
+                    }
+
+                    while(input.ToLower() != "m" && !DidTheInputIncludeADeposit)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Invalid input. Enter again:");
+                        Console.WriteLine();
+                        input = Console.ReadLine();
+
+                        for (int choosenDepositNum = 0; choosenDepositNum < bank.deposits.Count; choosenDepositNum++)
+                        {
+                            if (input == (choosenDepositNum + 1).ToString())
+                            {
+                                DidTheInputIncludeADeposit = true;
+                            }
+                        }
+                    }
+
                     if (input.ToLower() == "m")
                     {
-                        TimeTrial.NextTurn(game, player1, timeTrial);
+                        return;
                     }
 
                     for (int choosenDepositNum = 0; choosenDepositNum < bank.deposits.Count; choosenDepositNum++)
@@ -385,10 +477,12 @@ namespace Deposit_Investing_Game
                         if (input == (choosenDepositNum + 1).ToString())
                         {
                             ViewASingleDeposit(bank, bank.deposits.ElementAt(choosenDepositNum), game, player1, timeTrial);
+
+                            ViewDeposits(bank, "bank board", game, player1, timeTrial);
                         }
                     }
 
-                    ViewDeposits(game.bank, "bank board", game, player1, timeTrial);
+                    return;
                 }
             }
 
@@ -442,8 +536,7 @@ namespace Deposit_Investing_Game
             Console.WriteLine();
             Console.ReadLine();
 
-            ViewDeposits(bank, "bank board", game, player1, timeTrial);
-
+            return;
         }
 
         #endregion
@@ -457,7 +550,12 @@ namespace Deposit_Investing_Game
             List<AGame> games = new List<AGame>();
             games = WritingAllGamesInformation();
 
-            MainMeun(games);
+            for (int i = 0; i < double.MaxValue; i++)
+            {
+                MainMeun(games);
+
+                games = WritingAllGamesInformation();
+            }
         }
 
         #endregion
@@ -520,6 +618,7 @@ namespace Deposit_Investing_Game
             Console.WriteLine("The following are a list of all the games, each of the mentioned with his name.");
             Console.WriteLine("Enter the number of the game you want to view his high score table.");
             Console.WriteLine();
+            MainMeunMessage();
 
             for (int gameNum = 0; gameNum < games.Count; gameNum++)
             {
@@ -529,22 +628,62 @@ namespace Deposit_Investing_Game
 
             string input = Console.ReadLine();
 
-            ReturnToMainMeun(input);
+            if(ShouldIReturnToMeunByEndingFunction(input))
+            {
+                return;
+            }
 
             #region checking user input and then opening the high score
+
+            bool isGameFound = false;
+            int numForGame = 0;
 
             for(int gameNum = 0; gameNum < games.Count; gameNum++)
             {
                 if(input == (gameNum + 1).ToString())
                 {
-                    HighScore highScore = new HighScore(games.ElementAt(gameNum));
-                    highScore.next(games.ElementAt(gameNum));
+                    isGameFound = true;
+                    numForGame = gameNum;
                 }
+            }
+
+            if(isGameFound)
+            {
+                HighScore highScore = new HighScore(games.ElementAt(numForGame));
+                highScore.next(games.ElementAt(numForGame));
+            }
+
+            else
+            {
+                while(!isGameFound)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Invalid input. Enter again: ");
+                    Console.WriteLine();
+                    input = Console.ReadLine();
+
+                    if (ShouldIReturnToMeunByEndingFunction(input))
+                    {
+                        return;
+                    }
+
+                    for (int gameNum = 0; gameNum < games.Count; gameNum++)
+                    {
+                        if (input == (gameNum + 1).ToString())
+                        {
+                            isGameFound = true;
+                            numForGame = gameNum;
+                        }
+                    }
+                }
+
+                HighScore highScore = new HighScore(games.ElementAt(numForGame));
+                highScore.next(games.ElementAt(numForGame));
             }
 
             #endregion
 
-            ViewHighScore(games);
+            return;
         }
 
         #endregion
@@ -562,7 +701,7 @@ namespace Deposit_Investing_Game
 
             if(saveName.ToLower() == "m" && timeTrial != null)
             {
-                TimeTrial.NextTurn(game, player1, timeTrial);
+                return;
             }
 
             if(timeTrial != null)
@@ -636,16 +775,16 @@ namespace Deposit_Investing_Game
             if (timeTrial != null)
             {
                 File.WriteAllLines($@"DepositInvestingGame\Saves\TimeTrial\{saveName}.txt", allInfo);
-
-                Console.WriteLine();
-                Console.WriteLine("Your state has been saved successfully.");
-                Console.WriteLine();
-                Console.WriteLine("Enter anything to return to choose if to act/view info/return to the main meun");
-                Console.WriteLine();
-                Console.ReadLine();
-
-                return;
             }
+
+            Console.WriteLine();
+            Console.WriteLine("Your state has been saved successfully.");
+            Console.WriteLine();
+            Console.WriteLine("Enter anything to return to choose if to act/view info/return to the main meun");
+            Console.WriteLine();
+            Console.ReadLine();
+
+            return;
         }
 
         #region saving the player/s information specifcally
@@ -738,18 +877,42 @@ namespace Deposit_Investing_Game
             Console.WriteLine();
             string input = Console.ReadLine();
 
-            ReturnToMainMeun(input);
+            if(ShouldIReturnToMeunByEndingFunction(input))
+            {
+                return;
+            }
+
+            bool doesTheInputMatchAMode = false;
 
             if(input == "1")
             {
+                doesTheInputMatchAMode = true;
                 ChoosingAGameToLoadInTimeTrial();
             }
 
             else
             {
-                ChooseAGameToLoad();
+                while(!doesTheInputMatchAMode)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Invalid input. Enter again: ");
+                    Console.WriteLine();
+                    input = Console.ReadLine();
+                    if (ShouldIReturnToMeunByEndingFunction(input))
+                    {
+                        return;
+                    }
+
+                    if(input == "1")
+                    {
+                        doesTheInputMatchAMode = true;
+                    }
+                }
+
+                ChoosingAGameToLoadInTimeTrial();
             }
-            
+
+            return;
         }
 
         #endregion
@@ -765,12 +928,12 @@ namespace Deposit_Investing_Game
             {
                 Console.Clear();
                 Console.WriteLine();
-                Console.WriteLine("There no saved files for this mode.");
+                Console.WriteLine("There are no saved files for this mode.");
                 Console.WriteLine("Enter anything to return to the main meun.");
                 Console.WriteLine();
                 Console.ReadLine();
 
-                ReturnToMainMeun("m");
+                return;
             }
 
             else
@@ -791,7 +954,10 @@ namespace Deposit_Investing_Game
 
                 string wantedSave = Console.ReadLine();
 
-                ReturnToMainMeun(wantedSave);
+                if(ShouldIReturnToMeunByEndingFunction(wantedSave))
+                {
+                    return;
+                }
 
                 FileInfo wantedFile = new FileInfo("a.t");
 
@@ -808,7 +974,34 @@ namespace Deposit_Investing_Game
                     LoadTimeTrialGame(wantedFile);
                 }
 
-                ChoosingAGameToLoadInTimeTrial();
+                else
+                {
+                    while (wantedFile.ToString() == "a.t")
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Invalid input. Enter again:");
+                        Console.WriteLine();
+                        wantedSave = Console.ReadLine();
+
+                        if (ShouldIReturnToMeunByEndingFunction(wantedSave))
+                        {
+                            return;
+                        }
+
+                        for (int fileNum = 0; fileNum < files.Count(); fileNum++)
+                        {
+                            if (wantedSave == (fileNum + 1).ToString())
+                            {
+                                wantedFile = files.ElementAt(fileNum);
+                            }
+                        }
+
+                    }
+
+                    LoadTimeTrialGame(wantedFile);
+                }
+
+                return;
             }
         }
 
@@ -967,9 +1160,18 @@ namespace Deposit_Investing_Game
 
                     #region And finally, brining the player to the game
 
+                    Console.Clear();
+                    Console.WriteLine($"The saved game '{saveFile.Name}' has been loaded successfully.");
+                    Console.WriteLine();
+                    Console.WriteLine("Enter anything to enter the saved game.");
+                    Console.WriteLine();
+                    Console.ReadLine();
+
                     TimeTrial.NextTurn(game, player, currentTimeTrialGame);
 
                     #endregion
+
+                    return;
                 }
             }
 
@@ -1080,7 +1282,10 @@ namespace Deposit_Investing_Game
             Console.WriteLine();
             string gameName = Console.ReadLine();
 
-            ReturnToMainMeun(gameName);
+            if(ShouldIReturnToMeunByEndingFunction(gameName))
+            {
+                return;
+            }
 
             OpeningAnotherDetailInput();
 
@@ -1088,7 +1293,11 @@ namespace Deposit_Investing_Game
             Console.WriteLine("Alright. Now enter the risk profile all players in this game will have:");
             Console.WriteLine();
             string riskProfile = Console.ReadLine();
-            ReturnToMainMeun(riskProfile);
+
+            if (ShouldIReturnToMeunByEndingFunction(riskProfile))
+            {
+                return;
+            }
 
             Console.WriteLine();
 
@@ -1101,7 +1310,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter again:");
                 Console.WriteLine();
                 riskProfile = Console.ReadLine();
-                ReturnToMainMeun(riskProfile);
+                if (ShouldIReturnToMeunByEndingFunction(riskProfile))
+                {
+                    return;
+                }
             }
 
             while(!(0 < double.Parse(riskProfile) && double.Parse(riskProfile) <= 1))
@@ -1111,7 +1323,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter again:");
                 Console.WriteLine();
                 riskProfile = Console.ReadLine();
-                ReturnToMainMeun(riskProfile);
+                if (ShouldIReturnToMeunByEndingFunction(riskProfile))
+                {
+                    return;
+                }
             }
 
             OpeningAnotherDetailInput();
@@ -1120,7 +1335,10 @@ namespace Deposit_Investing_Game
             Console.WriteLine("Enter the amount of money a player must have to finish the game:");
             Console.WriteLine();
             string moneyToWin = Console.ReadLine();
-            ReturnToMainMeun(moneyToWin);
+            if (ShouldIReturnToMeunByEndingFunction(moneyToWin))
+            {
+                return;
+            }
 
             double endMoneyIsNum;
             while(!double.TryParse(moneyToWin, out endMoneyIsNum))
@@ -1130,7 +1348,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter again:");
                 Console.WriteLine();
                 moneyToWin = Console.ReadLine();
-                ReturnToMainMeun(moneyToWin);
+                if (ShouldIReturnToMeunByEndingFunction(moneyToWin))
+                {
+                    return;
+                }
             }
 
             while(double.Parse(moneyToWin) <= 0)
@@ -1140,7 +1361,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter again:");
                 Console.WriteLine();
                 moneyToWin = Console.ReadLine();
-                ReturnToMainMeun(moneyToWin);
+                if (ShouldIReturnToMeunByEndingFunction(moneyToWin))
+                {
+                    return;
+                }
             }
 
             OpeningAnotherDetailInput();
@@ -1149,7 +1373,10 @@ namespace Deposit_Investing_Game
             Console.WriteLine("Enter the amount of money any player would start this game with:");
             Console.WriteLine();
             string startPlayerMoney = Console.ReadLine();
-            ReturnToMainMeun(startPlayerMoney);
+            if (ShouldIReturnToMeunByEndingFunction(startPlayerMoney))
+            {
+                return;
+            }
 
             double startPlayerMoneyNum;
             while (!double.TryParse(startPlayerMoney, out startPlayerMoneyNum))
@@ -1159,7 +1386,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter again:");
                 Console.WriteLine();
                 startPlayerMoney = Console.ReadLine();
-                ReturnToMainMeun(startPlayerMoney);
+                if (ShouldIReturnToMeunByEndingFunction(startPlayerMoney))
+                {
+                    return;
+                }
             }
 
             while(double.Parse(startPlayerMoney) >= double.Parse(moneyToWin))
@@ -1170,7 +1400,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter again:");
                 Console.WriteLine();
                 startPlayerMoney = Console.ReadLine();
-                ReturnToMainMeun(startPlayerMoney);
+                if (ShouldIReturnToMeunByEndingFunction(startPlayerMoney))
+                {
+                    return;
+                }
             }
 
             OpeningAnotherDetailInput();
@@ -1179,7 +1412,10 @@ namespace Deposit_Investing_Game
             Console.WriteLine("Enter the income a player will receive between each turn:");
             Console.WriteLine();
             string incomePerTurn = Console.ReadLine();
-            ReturnToMainMeun(incomePerTurn);
+            if(ShouldIReturnToMeunByEndingFunction(incomePerTurn))
+            {
+                return;
+            }
 
             double incomeIsNum;
             while (!double.TryParse(incomePerTurn, out incomeIsNum))
@@ -1189,7 +1425,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter again:");
                 Console.WriteLine();
                 incomePerTurn = Console.ReadLine();
-                ReturnToMainMeun(incomePerTurn);
+                if (ShouldIReturnToMeunByEndingFunction(incomePerTurn))
+                {
+                    return;
+                }
             }
 
             while (double.Parse(incomePerTurn) <= 0)
@@ -1200,7 +1439,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter again:");
                 Console.WriteLine();
                 incomePerTurn = Console.ReadLine();
-                ReturnToMainMeun(incomePerTurn);
+                if (ShouldIReturnToMeunByEndingFunction(incomePerTurn))
+                {
+                    return;
+                }
             }
 
             while(double.Parse(incomePerTurn) >= double.Parse(moneyToWin))
@@ -1211,7 +1453,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter again:");
                 Console.WriteLine();
                 incomePerTurn = Console.ReadLine();
-                ReturnToMainMeun(incomePerTurn);
+                if (ShouldIReturnToMeunByEndingFunction(incomePerTurn))
+                {
+                    return;
+                }
             }
 
             #endregion
@@ -1224,7 +1469,10 @@ namespace Deposit_Investing_Game
             Console.WriteLine("Now let's define the bank. Enter the bank name:");
             Console.WriteLine();
             string bankName = Console.ReadLine();
-            ReturnToMainMeun(bankName);
+            if(ShouldIReturnToMeunByEndingFunction(bankName))
+            {
+                return;
+            }
 
             OpeningAnotherDetailInput();
 
@@ -1232,7 +1480,10 @@ namespace Deposit_Investing_Game
             Console.WriteLine("Nice name LOL. Now enter the amount of money the bank has at the start of this game:");
             Console.WriteLine();
             string bankStartMoney = Console.ReadLine();
-            ReturnToMainMeun(bankStartMoney);
+            if(ShouldIReturnToMeunByEndingFunction(bankStartMoney))
+            {
+                return;
+            }
 
             double bankStartMoneyIsNum;
             while (!double.TryParse(bankStartMoney, out bankStartMoneyIsNum))
@@ -1242,7 +1493,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter again:");
                 Console.WriteLine();
                 bankStartMoney = Console.ReadLine();
-                ReturnToMainMeun(bankStartMoney);
+                if(ShouldIReturnToMeunByEndingFunction(bankStartMoney))
+                {
+                    return;
+                }
             }
 
             while(((double.Parse(bankStartMoney) * 2) > double.Parse(moneyToWin)) || ((double.Parse(bankStartMoney) * 50) < double.Parse(moneyToWin)))
@@ -1253,7 +1507,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter again:");
                 Console.WriteLine();
                 bankStartMoney = Console.ReadLine();
-                ReturnToMainMeun(bankStartMoney);
+                if (ShouldIReturnToMeunByEndingFunction(bankStartMoney))
+                {
+                    return;
+                }
             }
 
             #endregion
@@ -1285,7 +1542,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter the deposits name:");
                 Console.WriteLine();
                 string depositName = Console.ReadLine();
-                ReturnToMainMeun(depositName);
+                if(ShouldIReturnToMeunByEndingFunction(depositName))
+                {
+                    return;
+                }
 
                 depositDetails[0] = depositName;
 
@@ -1295,7 +1555,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter the deposit's time span:");
                 Console.WriteLine();
                 string depositTimeSpan = Console.ReadLine();
-                ReturnToMainMeun(depositTimeSpan);
+                if (ShouldIReturnToMeunByEndingFunction(depositTimeSpan))
+                {
+                    return;
+                }
 
                 int depositTimeSpanIsNum;
                 while(!int.TryParse(depositTimeSpan, out depositTimeSpanIsNum))
@@ -1305,7 +1568,10 @@ namespace Deposit_Investing_Game
                     Console.WriteLine("Enter again:");
                     Console.WriteLine();
                     depositTimeSpan = Console.ReadLine();
-                    ReturnToMainMeun(depositTimeSpan);
+                    if(ShouldIReturnToMeunByEndingFunction(depositTimeSpan))
+                    {
+                        return;
+                    }
                 }
 
                 while (int.Parse(depositTimeSpan) < 1 || int.Parse(depositTimeSpan) > 100)
@@ -1315,7 +1581,10 @@ namespace Deposit_Investing_Game
                     Console.WriteLine("Enter again:");
                     Console.WriteLine();
                     depositTimeSpan = Console.ReadLine();
-                    ReturnToMainMeun(depositTimeSpan);
+                    if(ShouldIReturnToMeunByEndingFunction(depositTimeSpan))
+                    {
+                        return;
+                    }
                 }
 
                 depositDetails[1] = depositTimeSpan;
@@ -1326,7 +1595,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter the deposit's default interest per year:");
                 Console.WriteLine();
                 string depositDefaultInterest = Console.ReadLine();
-                ReturnToMainMeun(depositDefaultInterest);
+                if(ShouldIReturnToMeunByEndingFunction(depositDefaultInterest))
+                {
+                    return;
+                }
 
                 double depositDefaultInterestIsNum;
                 while (!double.TryParse(depositDefaultInterest, out depositDefaultInterestIsNum))
@@ -1336,7 +1608,10 @@ namespace Deposit_Investing_Game
                     Console.WriteLine("Enter again:");
                     Console.WriteLine();
                     depositDefaultInterest = Console.ReadLine();
-                    ReturnToMainMeun(depositDefaultInterest);
+                    if (ShouldIReturnToMeunByEndingFunction(depositDefaultInterest))
+                    {
+                        return;
+                    }
                 }
 
                 while (double.Parse(depositDefaultInterest) < 1.001 || double.Parse(depositDefaultInterest) > 1.1)
@@ -1346,7 +1621,10 @@ namespace Deposit_Investing_Game
                     Console.WriteLine("Enter again:");
                     Console.WriteLine();
                     depositDefaultInterest = Console.ReadLine();
-                    ReturnToMainMeun(depositDefaultInterest);
+                    if (ShouldIReturnToMeunByEndingFunction(depositDefaultInterest))
+                    {
+                        return;
+                    }
                 }
 
                 depositDetails[2] = depositDefaultInterest;
@@ -1360,7 +1638,10 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("(Enter 'y' for yes, or 'n' for no)");
                 Console.WriteLine();
                 moreDeposits = Console.ReadLine();
-                ReturnToMainMeun(moreDeposits);
+                if(ShouldIReturnToMeunByEndingFunction(moreDeposits))
+                {
+                    return;
+                }
 
                 while(moreDeposits.ToLower() != "y" && moreDeposits.ToLower() != "n")
                 {
@@ -1369,7 +1650,10 @@ namespace Deposit_Investing_Game
                     Console.WriteLine("Enter 'y' for yes, or 'n' for no:");
                     Console.WriteLine();
                     moreDeposits = Console.ReadLine();
-                    ReturnToMainMeun(moreDeposits);
+                    if (ShouldIReturnToMeunByEndingFunction(moreDeposits))
+                    {
+                        return;
+                    }
                 }
 
                 if(moreDeposits.ToLower() == "y")
@@ -1516,8 +1800,6 @@ namespace Deposit_Investing_Game
             if(input == "2")
             {
                 CreatingCustomGame();
-
-                MainMeun(games);
             }
 
             else if(input == "3")
@@ -1548,11 +1830,7 @@ namespace Deposit_Investing_Game
                 enrichement.next("enrichement");
             }
 
-            else
-            {
-                Console.Clear();
-                MainMeun(games);
-            }
+            return;
         }
 
         #endregion

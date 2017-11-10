@@ -53,7 +53,19 @@ namespace Deposit_Investing_Game
                 MainMeunMessage();
                 Console.WriteLine();
                 string input = Console.ReadLine();
-                ReturnToMainMeun(input);
+
+                while (input.ToLower() != "n" && input.ToLower() != "p" && input.ToLower() != "m")
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Invalid input. Enter again:");
+                    Console.WriteLine();
+                    input = Console.ReadLine();
+                }
+
+                if (ShouldIReturnToMeunByEndingFunction(input))
+                {
+                    return;
+                }
 
                 switch (input.ToLower())
                 {
@@ -63,14 +75,11 @@ namespace Deposit_Investing_Game
                     case "n":
                         Path = RecentScreen.Element("NextScreen");
                         break;
-                    default:
-                        next(mode);
-                        break;
                 }
 
-                if (Path.Value == "")
+                if(string.IsNullOrEmpty(Path.Value)) // this is after the "m" input because path needs to update in the switch
                 {
-                    ReturnToMainMeun("m");
+                    return;
                 }
 
                 foreach (var screen in Screens)
@@ -107,7 +116,7 @@ namespace Deposit_Investing_Game
                 Console.WriteLine("Enter anything to return to the main meun");
                 Console.WriteLine();
                 Console.ReadLine();
-                ReturnToMainMeun("m");
+                return;
             }
 
             #endregion
