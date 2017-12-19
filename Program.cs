@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -166,6 +166,45 @@ namespace Deposit_Investing_Game
 
             if (mode.ToLower() == "time trial")
             {
+                #region Introducing to the player to the levels
+
+                string pathForIntro = null;
+
+                if(game.name == "Level 1")
+                {
+                    pathForIntro = @"DepositInvestingGame\Games\Intros\Level 1.txt";
+                }
+
+                else if(game.name == "Level 2")
+                {
+                    pathForIntro = @"DepositInvestingGame\Games\Intros\Level 2.txt";
+                }
+
+                else if(game.name == "Level 3")
+                {
+                    pathForIntro = @"DepositInvestingGame\Games\Intros\Level 3.txt";
+                }
+
+                else if(game.name == "More realistic level 3")
+                {
+                    pathForIntro = @"DepositInvestingGame\Games\Intros\More realistic level 3.txt";
+                }
+
+                if(pathForIntro != null)
+                {
+                    WritingText(pathForIntro);
+                    Console.WriteLine();
+                    Console.WriteLine("(Yeah, sorry for lieing about taking you to your 1st turn, but you may need this.)");
+                    Console.WriteLine();
+                    Console.WriteLine("Enter anything to actually start playing..");
+                    Console.WriteLine();
+                    Console.ReadLine();
+
+                    Console.Clear();
+                }
+
+                #endregion
+
                 TimeTrial timeTrialGame = new TimeTrial();
                 TimeTrial.NextTurn(game, players.ElementAt(0), timeTrialGame);
             }
@@ -1060,6 +1099,13 @@ namespace Deposit_Investing_Game
 
         static void getTheGamesAndStart()
         {
+            Console.Clear();
+            WritingText(@"DepositInvestingGame\StoryLine.txt");
+            Console.WriteLine();
+            Console.WriteLine("Enter anything to continue to the main meun..");
+            Console.WriteLine();
+            Console.ReadLine();
+
             List<AGame> games = new List<AGame>();
             games = WritingAllGamesInformation();
 
@@ -1528,6 +1574,7 @@ namespace Deposit_Investing_Game
                     Console.WriteLine();
                     Console.WriteLine($"{fileNum + 1}. {countedFileName}");
                 }
+
                 Console.WriteLine();
 
                 string wantedSave = Console.ReadLine();
@@ -1624,7 +1671,7 @@ namespace Deposit_Investing_Game
             List<AGame> allGames = WritingAllGamesInformation();
             string gameName = fileInfo.ElementAt(1);
 
-            foreach(AGame game in allGames)
+            foreach (AGame game in allGames)
             {
                 if (game.name == gameName)
                 {
@@ -1823,9 +1870,9 @@ namespace Deposit_Investing_Game
                         {
                             List<Deposit> playerUpdatedDeposits = new List<Deposit>();
 
-                            foreach(Deposit depositInBank in game.bank.deposits)
+                            foreach (Deposit depositInBank in game.bank.deposits)
                             {
-                                if(depositInBank.whoItBelongsTo == player2.name)
+                                if (depositInBank.whoItBelongsTo == player2.name)
                                 {
                                     playerUpdatedDeposits.Add(depositInBank);
                                 }
@@ -1867,7 +1914,7 @@ namespace Deposit_Investing_Game
                         currentTimeTrialGame.year = CurrentGameTimeYear;
                     }
 
-                    if(mode.ToLower() == "player vs player")
+                    if (mode.ToLower() == "player vs player")
                     {
                         currentPlayerVSPlayerGame = new P1VsP2();
                         currentPlayerVSPlayerGame.month = CurrentGameTimeMonth;
@@ -1879,7 +1926,17 @@ namespace Deposit_Investing_Game
                     #region And finally, brining the player to the game
 
                     Console.Clear();
-                    Console.WriteLine($"The saved game '{saveFile.Name}' has been loaded successfully.");
+                    Console.WriteLine($"The saved game '{saveFile.Name.Remove((saveFile.Name.Length - 4), 4)}' has been loaded successfully.");
+                    Console.WriteLine();
+                    Console.WriteLine($"And it's from the game '{game.name}', with the players:");
+                    Console.WriteLine();
+                    Console.WriteLine($"'{player.name}'");
+
+                    if (mode.ToLower() == "player vs player")
+                    {
+                        Console.WriteLine($"and '{player2.name}'..");
+                    }
+
                     Console.WriteLine();
                     Console.WriteLine("Enter anything to enter the saved game.");
                     Console.WriteLine();
@@ -1910,7 +1967,7 @@ namespace Deposit_Investing_Game
 
         #endregion
 
-        #region When unlocking a tip or enrichement for any reason
+        #region When unlocking a tip or enrichment for any reason
 
         #region Writing into the xml file
 
@@ -1949,7 +2006,9 @@ namespace Deposit_Investing_Game
             Console.WriteLine();
             Console.WriteLine(" == Notification ==");
             Console.WriteLine();
-            Console.WriteLine($"Congrats! you unlocked a/an {textType}! And it seems to be about: '{textName}'");
+            Console.WriteLine("Congrats! you have beaten Bastard's best score in this level, and thus,");
+            Console.WriteLine();
+            Console.WriteLine($"You've unlocked a/an {textType}! And it seems to be about: '{textName}'");
             Console.WriteLine();
             Console.WriteLine($"You can now read it by going into '{textType}s' in the main meun.");
             Console.WriteLine();
@@ -2645,20 +2704,23 @@ namespace Deposit_Investing_Game
 
             else if(input == "6")
             {
-                BookScroll manual = new BookScroll(XDocument.Load(@"DepositInvestingGame\Manual\Manual.xml"), "manual");
+                BookScroll manual = new BookScroll(XDocument.Load(@"DepositInvestingGame\Manual\Manual.xml")
+                    , "manual");
                 manual.next("manual");
             }
 
             else if(input == "7")
             {
-                BookScroll tips = new BookScroll(XDocument.Load(@"DepositInvestingGame\Tips\Tips.xml"), "tips");
+                BookScroll tips = new BookScroll(XDocument.Load(@"DepositInvestingGame\Tips\Tips.xml")
+                    , "tip");
                 tips.next("tip");
             }
 
             else if (input == "8")
             {
-                BookScroll enrichement = new BookScroll(XDocument.Load(@"DepositInvestingGame\Enrichement\Enrichement.xml"), "enrichements");
-                enrichement.next("enrichement");
+                BookScroll enrichment = new BookScroll(XDocument.Load(@"DepositInvestingGame\Enrichement\Enrichement.xml")
+                    , "enrichment");
+                enrichment.next("enrichment");
             }
 
             return;
