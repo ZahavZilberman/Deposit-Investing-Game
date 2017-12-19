@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -1514,7 +1514,7 @@ namespace Deposit_Investing_Game
                 Console.WriteLine(" == GAME FINISHED! ==");
                 Console.WriteLine();
                 Console.WriteLine($"Well, it's a draw.");
-                Console.WriteLine($"Both players surpassed {game.moneyToEndGame} dollars, and finished '{game.name}'.. both have {drawPlayer.savingsAviliabe} dollars.");
+                Console.WriteLine($"Both players reached {game.moneyToEndGame} dollars, and finished '{game.name}'.. both have {drawPlayer.savingsAviliabe} dollars.");
                 Console.WriteLine($"(Reminder: The above calculatin does NOT take into account any money you may have invested in deposits)");
                 Console.WriteLine();
                 Console.WriteLine($"You both finished the game at: {Multiplayer.year} years and {Multiplayer.month} months in game time,");
