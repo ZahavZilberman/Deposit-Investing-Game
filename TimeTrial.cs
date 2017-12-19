@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -1235,8 +1235,10 @@ namespace Deposit_Investing_Game
             if (game.name == "Level 1")
             {
                 double timeToUnlock = (12 * 3) + 1;
+                double additionMoneyLeft = player1.savingsAviliabe - game.moneyToEndGame;
 
-                if (whenGameFinished <= timeToUnlock)
+                if ((additionMoneyLeft > 0 && whenGameFinished == timeToUnlock)
+                    || whenGameFinished < timeToUnlock)
                 {
                     UnlockedTipsAndEnrichementsPath = File.ReadAllLines(@"DepositInvestingGame\Games\Unlocking\Level1Unlocking.txt");
                 }
@@ -1245,8 +1247,10 @@ namespace Deposit_Investing_Game
             else if (game.name == "Level 2")
             {
                 double timeToUnlock = (12 * 6) + 7;
+                double additionMoneyLeft = player1.savingsAviliabe - game.moneyToEndGame;
 
-                if (whenGameFinished <= timeToUnlock)
+                if ((additionMoneyLeft > 0 && whenGameFinished == timeToUnlock)
+                    || whenGameFinished < timeToUnlock)
                 {
                     UnlockedTipsAndEnrichementsPath = File.ReadAllLines(@"DepositInvestingGame\Games\Unlocking\Level2Unlocking.txt");
                 }
@@ -1372,7 +1376,7 @@ namespace Deposit_Investing_Game
                                 string enrichementFileFromFilePath = RecentEnrichementPath.Value.Remove(0, baseForMathCharCount);
                                 string theEnrichementName = enrichementFileFromFilePath.Remove(enrichementFileFromFilePath.IndexOf("."), 4);
 
-                                MessagesPopUpWhenAPlayerUnlocksTipOrEnrichement("enrichement", RecentEnrichementPath.Value.ToString(), theEnrichementName);
+                                MessagesPopUpWhenAPlayerUnlocksTipOrEnrichement("enrichment", RecentEnrichementPath.Value.ToString(), theEnrichementName);
                             }
                         }
                     }
