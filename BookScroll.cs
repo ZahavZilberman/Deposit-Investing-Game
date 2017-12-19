@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +18,7 @@ namespace Deposit_Investing_Game
             Path = new XElement(RecentScreen.Element("Path"));
             UnlockedScreens = new List<XElement>();
 
-            if(mode.ToLower() == "tips" || mode.ToLower() == "enrichements")
+            if(mode.ToLower() == "tip" || mode.ToLower() == "enrichment")
             {
                 UnlockedScreens =
                     Screens.Where(screen => bool.Parse(screen.Element("Unlocked").Value) == true);
@@ -49,7 +49,7 @@ namespace Deposit_Investing_Game
 
         public void next(string mode)
         {
-            if (UnlockedScreens.Count() == 0 && (mode.ToLower() == "tip" || mode.ToLower() == "enrichement"))
+            if (UnlockedScreens.Count() == 0 && (mode.ToLower() == "tip" || mode.ToLower() == "enrichment"))
             {
                 return;
             }
@@ -58,7 +58,7 @@ namespace Deposit_Investing_Game
 
             WritingText(Path.Value);
             Console.WriteLine();
-            Console.WriteLine("enter 'n' to go to the next screen, or 'p' to go to the previous screen.");
+            Console.WriteLine($"enter 'n' to go to the next {mode}, or 'p' to go to the previous {mode}.");
             Console.WriteLine();
             Console.WriteLine("(Those are shortcuts for 'next'[n] and 'previous'[p], by the way)");
             Console.WriteLine();
@@ -88,7 +88,7 @@ namespace Deposit_Investing_Game
                         Path = RecentScreen.Element("PreviousScreen");
                     }
 
-                    else if (mode == "tip" || mode == "enrichement")
+                    else if (mode == "tip" || mode == "enrichment")
                     {
                         int index = IndexOfCurrentScreen(UnlockedScreens, RecentScreen);
 
@@ -113,7 +113,7 @@ namespace Deposit_Investing_Game
                         Path = RecentScreen.Element("NextScreen");
                     }
 
-                    else if (mode == "tip" || mode == "enrichement")
+                    else if (mode == "tip" || mode == "enrichment")
                     {
                         int index = IndexOfCurrentScreen(UnlockedScreens, RecentScreen);
 
