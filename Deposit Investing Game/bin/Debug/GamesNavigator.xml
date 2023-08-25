@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Games>
+  <Game>
+    <Path>DepositInvestingGame\Games\Level 1.xml</Path>
+  </Game>
+  <Game>
+    <Path>DepositInvestingGame\Games\Level 2.xml</Path>
+  </Game>
+  <Game>
+    <Path>DepositInvestingGame\Games\Level 3.xml</Path>
+  </Game>
+  <Game>
+    <Path>DepositInvestingGame\Games\More realistic level 3.xml</Path>
+  </Game>
+  <Game>
+    <Path>DepositInvestingGame\Games\yura real life.xml</Path>
+  </Game>
+  <Game>
+    <Path>DepositInvestingGame\Games\yura real life 2.xml</Path>
+  </Game>
+  <Game>
+    <Path>DepositInvestingGame\Games\yura 3.xml</Path>
+  </Game>
+</Games>

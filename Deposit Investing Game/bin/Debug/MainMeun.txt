@@ -1,0 +1,42 @@
+
+== Main Meun ==
+
+Welcome to the deposit investing game! Here you will get owned by banks and beg to them for nothing and so on.
+
+
+Enter the number of the mode to enter:
+
+
+1. "time trial"
+(start a new game where you'll play alone to finish a game as fast as possible).
+
+
+2. "Multiplayer"
+(start a new game where you'll 'race' against another human player
+to finish the game before him)
+
+
+3. "Create a game"
+(Create your own games)
+
+
+4. "high score"
+(view the high score table for every game).
+
+
+5. "load game"
+(load a saved game and play from it).
+
+
+6. "manual"
+(read the game's manual).
+
+
+7. "Tips"
+(read tips for the game).
+
+
+8. "Enrichment"
+(read economical material written for the game that is just enriching).
+
+

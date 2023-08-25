@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HighScoreTable>
+  <Game>
+    <GameName>Level 3</GameName>
+    <NumOfRecords>0</NumOfRecords>
+    <RecordsInGameTime></RecordsInGameTime>
+  </Game>
+  <Game>
+    <GameName>More realistic level 3</GameName>
+    <NumOfRecords>0</NumOfRecords>
+    <RecordsInGameTime></RecordsInGameTime>
+  </Game>
+  <Game>
+    <GameName>Level 1</GameName>
+    <NumOfRecords>1</NumOfRecords>
+    <RecordsInGameTime>
+      <Record>
+        <Player>NonePerson (the game developer)</Player>
+        <Month>1</Month>
+        <Year>3</Year>
+        <Mode>Time trial</Mode>
+        <Money>73</Money>
+      </Record>
+    </RecordsInGameTime>
+  </Game>
+  <Game>
+    <GameName>Level 2</GameName>
+    <NumOfRecords>0</NumOfRecords>
+    <RecordsInGameTime></RecordsInGameTime>
+  </Game>
+  <Game>
+    <GameName>yura real life</GameName>
+    <NumOfRecords>0</NumOfRecords>
+    <RecordsInGameTime></RecordsInGameTime>
+  </Game>
+  <Game>
+    <GameName>yura real life 2</GameName>
+    <NumOfRecords>0</NumOfRecords>
+    <RecordsInGameTime></RecordsInGameTime>
+  </Game>
+  <Game>
+    <GameName>yura 3</GameName>
+    <NumOfRecords>2</NumOfRecords>
+    <RecordsInGameTime>
+      <Record>
+        <Player>yura</Player>
+        <Month>1</Month>
+        <Year>6</Year>
+        <Mode>Time trial</Mode>
+        <Money>9037</Money>
+      </Record>
+      <Record>
+        <Player>l.z</Player>
+        <Month>7</Month>
+        <Year>5</Year>
+        <Mode>Time trial</Mode>
+        <Money>6786</Money>
+      </Record>
+    </RecordsInGameTime>
+  </Game>
+</HighScoreTable>
